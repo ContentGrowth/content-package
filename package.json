@@ -31,8 +31,8 @@
       "types": "./dist/astro/index.d.ts",
       "import": "./dist/astro/index.js"
     },
-    "./astro/BlogList.astro": "./dist/astro/BlogList.astro",
-    "./astro/BlogPost.astro": "./dist/astro/BlogPost.astro",
+    "./astro/ContentList.astro": "./dist/astro/ContentList.astro",
+    "./astro/ContentViewer.astro": "./dist/astro/ContentViewer.astro",
     "./styles.css": "./dist/styles.css"
   },
   "files": [

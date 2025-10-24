@@ -4,8 +4,8 @@
  */
 
 /* ===== CSS Variables ===== */
-.cg-blog-list,
-.cg-blog-post,
+.cg-content-list,
+.cg-content-viewer,
 .cg-widget {
   /* Light theme (default) */
   --cg-primary: #3b82f6;
@@ -27,8 +27,8 @@
 }
 
 /* Dark theme */
-.cg-blog-list.cg-theme-dark,
-.cg-blog-post.cg-theme-dark,
+.cg-content-list.cg-theme-dark,
+.cg-content-viewer.cg-theme-dark,
 .cg-widget[data-theme="dark"] {
   --cg-primary: #60a5fa;
   --cg-primary-hover: #3b82f6;
@@ -42,16 +42,16 @@
 }
 
 /* ===== Reset & Base ===== */
-.cg-blog-list *,
-.cg-blog-post *,
+.cg-content-list *,
+.cg-content-viewer *,
 .cg-widget * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-.cg-blog-list,
-.cg-blog-post,
+.cg-content-list,
+.cg-content-viewer,
 .cg-widget {
   width: 100%;
   max-width: 100%;
@@ -703,7 +703,7 @@ a.cg-card {
 
 /* ===== Astro Components Specific Styles ===== */
 
-/* Articles Grid for BlogList */
+/* Articles Grid for ContentList */
 .cg-articles-grid.cg-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -824,7 +824,7 @@ a.cg-card {
   color: var(--cg-text-secondary);
 }
 
-/* BlogPost Styles */
+/* ContentViewer Styles */
 .cg-post-header {
   margin-bottom: 2rem;
 }

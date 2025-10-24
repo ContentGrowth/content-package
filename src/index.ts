@@ -1,5 +1,5 @@
 /**
- * Content Growth Blog Widget
+ * Content Growth Content Widget
  * @packageDocumentation
  */
 

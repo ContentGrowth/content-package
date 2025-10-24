@@ -12,9 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release
 - Core API client for framework-agnostic usage
 - Vanilla JavaScript widget with full feature set
-- React components (BlogList, BlogPost) and hooks
-- Vue 3 components (BlogList, BlogPost) and composables
-- Astro components (BlogList, BlogPost) with SSR support
+- React components (ContentList, ContentViewer) and hooks
+- Vue 3 components (ContentList, ContentViewer) and composables
+- Astro components (ContentList, ContentViewer) with SSR support
 - TypeScript support with full type definitions
 - Multiple layout modes (cards, rows)
 - Multiple display modes (compact, comfortable, spacious)
@@ -45,8 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Components
 
-- BlogList - Article list with pagination
-- BlogPost - Single article viewer
+- ContentList - Article list with pagination
+- ContentViewer - Single article viewer
 - React hooks (useArticles, useArticle, useCategories, useTags)
 - Vue composables (useArticles, useArticle, useCategories, useTags)
 

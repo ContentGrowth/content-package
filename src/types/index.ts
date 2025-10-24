@@ -1,5 +1,5 @@
 /**
- * Content Growth Blog Widget - TypeScript Types
+ * Content Growth Content Widget - TypeScript Types
  */
 
 /**
@@ -145,9 +145,9 @@ export type DisplayMode = 'compact' | 'comfortable' | 'spacious';
 export type Theme = 'light' | 'dark';
 
 /**
- * Component props for BlogList
+ * Component props for ContentList
  */
-export interface BlogListProps {
+export interface ContentListProps {
   /**
    * Your Content Growth API key
    */
@@ -206,9 +206,9 @@ export interface BlogListProps {
 }
 
 /**
- * Component props for BlogPost
+ * Component props for ContentViewer
  */
-export interface BlogPostProps {
+export interface ContentViewerProps {
   /**
    * Your Content Growth API key
    */

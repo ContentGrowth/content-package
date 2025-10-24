@@ -1,17 +1,17 @@
 /**
- * React BlogPost Component
+ * React ContentViewer Component
  * Displays a single article with full content
  */
 
 import React, { useEffect, useRef } from 'react';
 import { ContentGrowthWidget } from '../widget/widget.js';
-import type { BlogPostProps } from '../types/index.js';
+import type { ContentViewerProps } from '../types/index.js';
 
-export interface ReactBlogPostProps extends Omit<BlogPostProps, 'class'> {
+export interface ReactContentViewerProps extends Omit<ContentViewerProps, 'class'> {
   className?: string;
 }
 
-export const BlogPost: React.FC<ReactBlogPostProps> = ({
+export const ContentViewer: React.FC<ReactContentViewerProps> = ({
   apiKey,
   uuid,
   baseUrl,
@@ -46,10 +46,10 @@ export const BlogPost: React.FC<ReactBlogPostProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`cg-blog-post cg-theme-${theme} ${className}`}
+      className={`cg-content-viewer cg-theme-${theme} ${className}`}
       data-cg-widget="post"
     />
   );
 };
 
-export default BlogPost;
+export default ContentViewer;

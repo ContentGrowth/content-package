@@ -1,14 +1,14 @@
 ---
 /**
- * BlogPost Component
+ * ContentViewer Component
  * Displays a single article with full content
  */
-import type { BlogPostProps } from '../types/index.js';
+import type { ContentViewerProps } from '../types/index.js';
 import { ContentGrowthClient } from '../core/client.js';
 import { formatDate, calculateReadingTime } from '../core/utils.js';
 import { marked } from 'marked';
 
-interface Props extends BlogPostProps {}
+interface Props extends ContentViewerProps {}
 
 const {
   apiKey,
@@ -33,7 +33,7 @@ const readingTime = calculateReadingTime(article.wordCount);
 ---
 
 <article 
-  class={`cg-blog-post cg-theme-${theme} ${className}`}
+  class={`cg-content-viewer cg-theme-${theme} ${className}`}
   data-cg-widget="post"
 >
   {showBackButton && (

@@ -1,5 +1,5 @@
 /**
- * Content Growth Blog Widget - Core API Client
+ * Content Growth Content Widget - Core API Client
  * Framework-agnostic API client for fetching articles
  */
 

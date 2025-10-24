@@ -1,10 +1,10 @@
 /**
- * Content Growth Blog Widget - React Components
+ * Content Growth Content Widget - React Components
  */
 
-export { BlogList } from './BlogList.js';
-export { BlogPost } from './BlogPost.js';
+export { ContentList } from './ContentList.js';
+export { ContentViewer } from './ContentViewer.js';
 export * from './hooks.js';
 
-export type { ReactBlogListProps } from './BlogList.js';
-export type { ReactBlogPostProps } from './BlogPost.js';
+export type { ReactContentListProps } from './ContentList.js';
+export type { ReactContentViewerProps } from './ContentViewer.js';

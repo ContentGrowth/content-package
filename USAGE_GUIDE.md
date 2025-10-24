@@ -15,18 +15,18 @@ content-package/
 │   │   ├── widget.js      # Main widget class
 │   │   └── index.js       # Widget exports
 │   ├── react/             # React components
-│   │   ├── BlogList.tsx   # BlogList component
-│   │   ├── BlogPost.tsx   # BlogPost component
+│   │   ├── ContentList.tsx   # ContentList component
+│   │   ├── ContentViewer.tsx   # ContentViewer component
 │   │   ├── hooks.ts       # React hooks
 │   │   └── index.ts       # React exports
 │   ├── vue/               # Vue components
-│   │   ├── BlogList.vue   # BlogList component
-│   │   ├── BlogPost.vue   # BlogPost component
+│   │   ├── ContentList.vue   # ContentList component
+│   │   ├── ContentViewer.vue   # ContentViewer component
 │   │   ├── composables.ts # Vue composables
 │   │   └── index.ts       # Vue exports
 │   ├── astro/             # Astro components
-│   │   ├── BlogList.astro # Article list component
-│   │   ├── BlogPost.astro # Single article component
+│   │   ├── ContentList.astro # Article list component
+│   │   ├── ContentViewer.astro # Single article component
 │   │   └── index.ts       # Astro exports
 │   ├── types/             # TypeScript types
 │   │   └── index.ts       # All type definitions
@@ -61,11 +61,11 @@ Then in your Astro pages:
 ```astro
 ---
 // Import from linked package
-import { BlogList } from '@content-growth/content-widget/astro';
+import { ContentList } from '@content-growth/content-widget/astro';
 import '@content-growth/content-widget/styles.css';
 ---
 
-<BlogList apiKey="pk_your_key" />
+<ContentList apiKey="pk_your_key" />
 ```
 
 ### Step 2: Create Test Pages
@@ -76,7 +76,7 @@ Create example pages to test the components:
 ```astro
 ---
 import Layout from '../../layouts/Layout.astro';
-import { BlogList } from '@content-growth/content-widget/astro';
+import { ContentList } from '@content-growth/content-widget/astro';
 import '@content-growth/content-widget/styles.css';
 ---
 
@@ -84,7 +84,7 @@ import '@content-growth/content-widget/styles.css';
   <main class="container mx-auto px-4 py-8">
     <h1 class="text-4xl font-bold mb-8">Our Content</h1>
     
-    <BlogList
+    <ContentList
       apiKey={import.meta.env.CG_API_KEY || 'pk_test_key'}
       baseUrl={import.meta.env.CG_API_URL || 'http://localhost:8787'}
       layout="cards"
@@ -100,7 +100,7 @@ import '@content-growth/content-widget/styles.css';
 ```astro
 ---
 import Layout from '../../../layouts/Layout.astro';
-import { BlogPost } from '@content-growth/content-widget/astro';
+import { ContentViewer } from '@content-growth/content-widget/astro';
 import '@content-growth/content-widget/styles.css';
 
 const { uuid } = Astro.params;
@@ -108,7 +108,7 @@ const { uuid } = Astro.params;
 
 <Layout title="Article">
   <main class="container mx-auto px-4 py-8">
-    <BlogPost
+    <ContentViewer
       apiKey={import.meta.env.CG_API_KEY || 'pk_test_key'}
       baseUrl={import.meta.env.CG_API_URL || 'http://localhost:8787'}
       uuid={uuid}
@@ -212,11 +212,11 @@ npm install @content-growth/content-widget
 
 ```astro
 ---
-import { BlogList } from '@content-growth/content-widget/astro';
+import { ContentList } from '@content-growth/content-widget/astro';
 import '@content-growth/content-widget/styles.css';
 ---
 
-<BlogList apiKey="pk_user_key" />
+<ContentList apiKey="pk_user_key" />
 ```
 
 ## 🔧 Package Features
@@ -255,8 +255,8 @@ const { tags } = await client.getTags();
 
 **Pre-built, styled components** for Astro:
 
-- `BlogList` - Article list with pagination
-- `BlogPost` - Single article with markdown rendering
+- `ContentList` - Article list with pagination
+- `ContentViewer` - Single article with markdown rendering
 
 ### 3. Utility Functions
 
@@ -282,8 +282,8 @@ import type {
   ArticleWithContent,
   Pagination,
   ClientConfig,
-  BlogListProps,
-  BlogPostProps
+  ContentListProps,
+  ContentViewerProps
 } from '@content-growth/content-widget/core';
 ```
 
@@ -293,7 +293,7 @@ import type {
 
 ```css
 /* Override default styles */
-.cg-blog-list {
+.cg-content-list {
   --cg-primary: #your-color;
   --cg-radius: 8px;
 }
@@ -305,13 +305,13 @@ import type {
 
 ```astro
 ---
-import { BlogList } from '@content-growth/content-widget/astro';
+import { ContentList } from '@content-growth/content-widget/astro';
 import '@content-growth/content-widget/styles.css';
 ---
 
 <style>
   /* Override widget styles */
-  :global(.cg-blog-list) {
+  :global(.cg-content-list) {
     --cg-primary: #10b981;
     --cg-radius: 16px;
   }
@@ -322,7 +322,7 @@ import '@content-growth/content-widget/styles.css';
   }
 </style>
 
-<BlogList apiKey="pk_xxx" class="my-custom-class" />
+<ContentList apiKey="pk_xxx" class="my-custom-class" />
 ```
 
 ### Custom Layout
@@ -359,7 +359,7 @@ CG_API_KEY=pk_your_key_here
 
 ```astro
 ---
-<BlogList apiKey={import.meta.env.CG_API_KEY} />
+<ContentList apiKey={import.meta.env.CG_API_KEY} />
 ---
 ```
 
@@ -369,7 +369,7 @@ Wrap components in error boundaries:
 
 ```astro
 ---
-import { BlogList } from '@content-growth/content-widget/astro';
+import { ContentList } from '@content-growth/content-widget/astro';
 
 let error = null;
 try {
@@ -382,7 +382,7 @@ try {
 {error ? (
   <div class="error">Failed to load articles</div>
 ) : (
-  <BlogList apiKey="pk_xxx" />
+  <ContentList apiKey="pk_xxx" />
 )}
 ```
 
@@ -404,11 +404,11 @@ const { articles } = await client.listArticles({
 
 ### 4. SEO
 
-Use proper meta tags with BlogPost:
+Use proper meta tags with ContentViewer:
 
 ```astro
 ---
-import { BlogPost } from '@content-growth/content-widget/astro';
+import { ContentViewer } from '@content-growth/content-widget/astro';
 import { ContentGrowthClient } from '@content-growth/content-widget/core';
 
 const { uuid } = Astro.params;
@@ -423,7 +423,7 @@ const article = await client.getArticle(uuid);
   <meta property="og:description" content={article.summary} />
 </head>
 
-<BlogPost apiKey="pk_xxx" uuid={uuid} />
+<ContentViewer apiKey="pk_xxx" uuid={uuid} />
 ```
 
 ## 🐛 Troubleshooting
@@ -435,7 +435,7 @@ const article = await client.getArticle(uuid);
 ```typescript
 // ✅ Correct
 import { ContentGrowthClient } from '@content-growth/content-widget/core';
-import { BlogList } from '@content-growth/content-widget/astro';
+import { ContentList } from '@content-growth/content-widget/astro';
 
 // ❌ Wrong
 import { ContentGrowthClient } from '@content-growth/content-widget';

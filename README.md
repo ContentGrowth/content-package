@@ -43,11 +43,11 @@ npm install @content-growth/content-widget
 ### React
 
 ```jsx
-import { BlogList } from '@content-growth/content-widget/react';
+import { ContentList } from '@content-growth/content-widget/react';
 import '@content-growth/content-widget/styles.css';
 
 function App() {
-  return <BlogList apiKey="pk_your_key_here" layout="cards" />;
+  return <ContentList apiKey="pk_your_key_here" layout="cards" />;
 }
 ```
 
@@ -56,7 +56,7 @@ function App() {
 ```jsx
 import { useArticles } from '@content-growth/content-widget/react';
 
-function CustomBlogList() {
+function CustomContentList() {
   const { articles, loading, error } = useArticles({
     apiKey: 'pk_your_key_here',
     page: 1,
@@ -83,11 +83,11 @@ function CustomBlogList() {
 
 ```vue
 <template>
-  <BlogList api-key="pk_your_key_here" layout="cards" />
+  <ContentList api-key="pk_your_key_here" layout="cards" />
 </template>
 
 <script setup>
-import { BlogList } from '@content-growth/content-widget/vue';
+import { ContentList } from '@content-growth/content-widget/vue';
 import '@content-growth/content-widget/styles.css';
 </script>
 ```
@@ -123,11 +123,11 @@ const { articles, loading, error } = useArticles({
 
 ```astro
 ---
-import { BlogList } from '@content-growth/content-widget/astro';
+import { ContentList } from '@content-growth/content-widget/astro';
 import '@content-growth/content-widget/styles.css';
 ---
 
-<BlogList apiKey="pk_your_key_here" />
+<ContentList apiKey="pk_your_key_here" />
 ```
 
 ### API Client (Framework Agnostic)
@@ -169,10 +169,10 @@ const widget = new ContentGrowthWidget(container, {
 
 ### React Components
 
-**BlogList:**
+**ContentList:**
 
 ```jsx
-<BlogList
+<ContentList
   apiKey="pk_your_key_here"
   layout="cards"
   displayMode="comfortable"
@@ -184,10 +184,10 @@ const widget = new ContentGrowthWidget(container, {
 />
 ```
 
-**BlogPost:**
+**ContentViewer:**
 
 ```jsx
-<BlogPost
+<ContentViewer
   apiKey="pk_your_key_here"
   uuid="article-uuid"
   theme="light"
@@ -205,10 +205,10 @@ const widget = new ContentGrowthWidget(container, {
 
 ### Vue Components
 
-**BlogList:**
+**ContentList:**
 
 ```vue
-<BlogList
+<ContentList
   api-key="pk_your_key_here"
   layout="cards"
   display-mode="comfortable"
@@ -220,10 +220,10 @@ const widget = new ContentGrowthWidget(container, {
 />
 ```
 
-**BlogPost:**
+**ContentViewer:**
 
 ```vue
-<BlogPost
+<ContentViewer
   api-key="pk_your_key_here"
   uuid="article-uuid"
   theme="light"
@@ -241,10 +241,10 @@ const widget = new ContentGrowthWidget(container, {
 
 ### Astro Components
 
-**BlogList:**
+**ContentList:**
 
 ```astro
-<BlogList
+<ContentList
   apiKey="pk_your_key_here"
   layout="cards"
   displayMode="comfortable"
@@ -256,10 +256,10 @@ const widget = new ContentGrowthWidget(container, {
 />
 ```
 
-**BlogPost:**
+**ContentViewer:**
 
 ```astro
-<BlogPost
+<ContentViewer
   apiKey="pk_your_key_here"
   uuid={uuid}
   theme="light"
@@ -333,7 +333,7 @@ import '@content-growth/content-widget/styles.css';
 Override CSS variables:
 
 ```css
-.cg-blog-list {
+.cg-content-list {
   --cg-primary: #3b82f6;
   --cg-primary-hover: #2563eb;
   --cg-bg: #ffffff;
@@ -358,8 +358,8 @@ import type {
   Tag,
   ClientConfig,
   ListArticlesOptions,
-  BlogListProps,
-  BlogPostProps
+  ContentListProps,
+  ContentViewerProps
 } from '@content-growth/content-widget/core';
 ```
 
@@ -376,14 +376,14 @@ import type {
 
 ```tsx
 // app/articles/page.tsx
-import { BlogList } from '@content-growth/content-widget/react';
+import { ContentList } from '@content-growth/content-widget/react';
 import '@content-growth/content-widget/styles.css';
 
 export default function ArticlesPage() {
   return (
     <main>
       <h1>Articles</h1>
-      <BlogList apiKey={process.env.CG_API_KEY!} />
+      <ContentList apiKey={process.env.CG_API_KEY!} />
     </main>
   );
 }
@@ -396,12 +396,12 @@ export default function ArticlesPage() {
 <template>
   <div>
     <h1>Articles</h1>
-    <BlogList :api-key="apiKey" />
+    <ContentList :api-key="apiKey" />
   </div>
 </template>
 
 <script setup>
-import { BlogList } from '@content-growth/content-widget/vue';
+import { ContentList } from '@content-growth/content-widget/vue';
 import '@content-growth/content-widget/styles.css';
 
 const config = useRuntimeConfig();

@@ -1,7 +1,7 @@
 <template>
   <div
     ref="containerRef"
-    :class="`cg-blog-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${className}`"
+    :class="`cg-content-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${className}`"
     data-cg-widget="list"
   />
 </template>
@@ -9,13 +9,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { ContentGrowthWidget } from '../widget/widget.js';
-import type { BlogListProps } from '../types/index.js';
+import type { ContentListProps } from '../types/index.js';
 
-export interface VueBlogListProps extends Omit<BlogListProps, 'class'> {
+export interface VueContentListProps extends Omit<ContentListProps, 'class'> {
   className?: string;
 }
 
-const props = withDefaults(defineProps<VueBlogListProps>(), {
+const props = withDefaults(defineProps<VueContentListProps>(), {
   layout: 'cards',
   displayMode: 'comfortable',
   theme: 'light',

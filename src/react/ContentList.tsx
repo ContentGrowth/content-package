@@ -1,17 +1,17 @@
 /**
- * React BlogList Component
+ * React ContentList Component
  * Displays a list of articles with pagination
  */
 
 import React, { useEffect, useRef } from 'react';
 import { ContentGrowthWidget } from '../widget/widget.js';
-import type { BlogListProps } from '../types/index.js';
+import type { ContentListProps } from '../types/index.js';
 
-export interface ReactBlogListProps extends Omit<BlogListProps, 'class'> {
+export interface ReactContentListProps extends Omit<ContentListProps, 'class'> {
   className?: string;
 }
 
-export const BlogList: React.FC<ReactBlogListProps> = ({
+export const ContentList: React.FC<ReactContentListProps> = ({
   apiKey,
   baseUrl,
   layout = 'cards',
@@ -53,10 +53,10 @@ export const BlogList: React.FC<ReactBlogListProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`cg-blog-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${className}`}
+      className={`cg-content-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${className}`}
       data-cg-widget="list"
     />
   );
 };
 
-export default BlogList;
+export default ContentList;

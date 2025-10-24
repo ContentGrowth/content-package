@@ -115,8 +115,8 @@ Want to add support for a new framework? Great!
 
 ```
 src/svelte/
-├── BlogList.svelte
-├── BlogPost.svelte
+├── ContentList.svelte
+├── ContentViewer.svelte
 ├── stores.ts (if needed)
 └── index.ts
 ```

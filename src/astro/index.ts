@@ -1,6 +1,6 @@
 /**
- * Content Growth Blog Widget - Astro Components
+ * Content Growth Content Widget - Astro Components
  */
 
-export { default as BlogList } from './BlogList.astro';
-export { default as BlogPost } from './BlogPost.astro';
+export { default as ContentList } from './ContentList.astro';
+export { default as ContentViewer } from './ContentViewer.astro';

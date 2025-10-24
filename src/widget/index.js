@@ -30,7 +30,7 @@ if (typeof document !== 'undefined' && !import.meta.url.includes('node_modules')
 }
 
 function initializeWidgets() {
-  const containers = document.querySelectorAll('[data-cg-blog]');
+  const containers = document.querySelectorAll('[data-cg-content]');
   containers.forEach(container => {
     new ContentGrowthWidget(container);
   });

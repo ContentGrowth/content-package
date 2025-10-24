@@ -1,13 +1,13 @@
 ---
 /**
- * BlogList Component
+ * ContentList Component
  * Displays a list of articles with pagination
  */
-import type { BlogListProps } from '../types/index.js';
+import type { ContentListProps } from '../types/index.js';
 import { ContentGrowthClient } from '../core/client.js';
 import { formatDate, calculateReadingTime } from '../core/utils.js';
 
-interface Props extends BlogListProps {}
+interface Props extends ContentListProps {}
 
 const {
   apiKey,
@@ -44,7 +44,7 @@ function buildPageUrl(page: number): string {
 ---
 
 <div 
-  class={`cg-blog-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${className}`}
+  class={`cg-content-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${className}`}
   data-cg-widget="list"
 >
   {articles.length === 0 ? (

@@ -1,7 +1,7 @@
 <template>
   <div
     ref="containerRef"
-    :class="`cg-blog-post cg-theme-${theme} ${className}`"
+    :class="`cg-content-viewer cg-theme-${theme} ${className}`"
     data-cg-widget="post"
   />
 </template>
@@ -9,13 +9,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { ContentGrowthWidget } from '../widget/widget.js';
-import type { BlogPostProps } from '../types/index.js';
+import type { ContentViewerProps } from '../types/index.js';
 
-export interface VueBlogPostProps extends Omit<BlogPostProps, 'class'> {
+export interface VueContentViewerProps extends Omit<ContentViewerProps, 'class'> {
   className?: string;
 }
 
-const props = withDefaults(defineProps<VueBlogPostProps>(), {
+const props = withDefaults(defineProps<VueContentViewerProps>(), {
   theme: 'light',
   showBackButton: false,
   backUrl: '/articles',
