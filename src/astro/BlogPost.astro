@@ -1,0 +1,206 @@
+---
+/**
+ * BlogPost Component
+ * Displays a single article with full content
+ */
+import type { BlogPostProps } from '../types/index.js';
+import { ContentGrowthClient } from '../core/client.js';
+import { formatDate, calculateReadingTime } from '../core/utils.js';
+import { marked } from 'marked';
+
+interface Props extends BlogPostProps {}
+
+const {
+  apiKey,
+  uuid,
+  baseUrl,
+  theme = 'light',
+  showBackButton = false,
+  backUrl = '/articles',
+  class: className = ''
+} = Astro.props;
+
+// Fetch article
+const client = new ContentGrowthClient({ apiKey, baseUrl });
+const article = await client.getArticle(uuid);
+
+// Render markdown to HTML
+const contentHtml = marked(article.content);
+
+// Format metadata
+const publishedDate = formatDate(article.publishedAt);
+const readingTime = calculateReadingTime(article.wordCount);
+---
+
+<article 
+  class={`cg-blog-post cg-theme-${theme} ${className}`}
+  data-cg-widget="post"
+>
+  {showBackButton && (
+    <div class="cg-post-header">
+      <a href={backUrl} class="cg-back-btn">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Back to articles
+      </a>
+    </div>
+  )}
+
+  <header class="cg-post-meta">
+    {article.category && (
+      <div class="cg-post-category">
+        <span class="cg-category-badge">{article.category}</span>
+      </div>
+    )}
+    
+    <h1 class="cg-post-title">{article.title}</h1>
+    
+    {article.summary && (
+      <p class="cg-post-summary">{article.summary}</p>
+    )}
+    
+    <div class="cg-post-info">
+      <span class="cg-info-author">{article.authorName}</span>
+      <span class="cg-info-separator">•</span>
+      <time class="cg-info-date" datetime={new Date(article.publishedAt * 1000).toISOString()}>
+        {publishedDate}
+      </time>
+      <span class="cg-info-separator">•</span>
+      <span class="cg-info-reading-time">{readingTime}</span>
+    </div>
+    
+    {article.tags.length > 0 && (
+      <div class="cg-post-tags">
+        {article.tags.map((tag) => (
+          <span class="cg-tag">{tag}</span>
+        ))}
+      </div>
+    )}
+  </header>
+
+  <div class="cg-post-content" set:html={contentHtml} />
+</article>
+
+<style is:global>
+  /* Markdown content styling */
+  .cg-post-content {
+    line-height: 1.7;
+  }
+
+  .cg-post-content h1,
+  .cg-post-content h2,
+  .cg-post-content h3,
+  .cg-post-content h4,
+  .cg-post-content h5,
+  .cg-post-content h6 {
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .cg-post-content h1 { font-size: 2em; }
+  .cg-post-content h2 { font-size: 1.5em; }
+  .cg-post-content h3 { font-size: 1.25em; }
+  .cg-post-content h4 { font-size: 1.1em; }
+
+  .cg-post-content p {
+    margin-bottom: 1.5em;
+  }
+
+  .cg-post-content a {
+    color: #2563eb;
+    text-decoration: underline;
+  }
+
+  .cg-post-content a:hover {
+    color: #1d4ed8;
+  }
+
+  .cg-post-content ul,
+  .cg-post-content ol {
+    margin-bottom: 1.5em;
+    padding-left: 2em;
+  }
+
+  .cg-post-content li {
+    margin-bottom: 0.5em;
+  }
+
+  .cg-post-content code {
+    background: #f3f4f6;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: 'Courier New', monospace;
+  }
+
+  .cg-post-content pre {
+    background: #1f2937;
+    color: #f9fafb;
+    padding: 1.5em;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 1.5em;
+  }
+
+  .cg-post-content pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+  }
+
+  .cg-post-content blockquote {
+    border-left: 4px solid #e5e7eb;
+    padding-left: 1.5em;
+    margin: 1.5em 0;
+    font-style: italic;
+    color: #6b7280;
+  }
+
+  .cg-post-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5em 0;
+  }
+
+  .cg-post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5em;
+  }
+
+  .cg-post-content th,
+  .cg-post-content td {
+    border: 1px solid #e5e7eb;
+    padding: 0.75em;
+    text-align: left;
+  }
+
+  .cg-post-content th {
+    background: #f9fafb;
+    font-weight: 600;
+  }
+
+  /* Dark theme overrides */
+  .cg-theme-dark .cg-post-content code {
+    background: #374151;
+    color: #f9fafb;
+  }
+
+  .cg-theme-dark .cg-post-content blockquote {
+    border-left-color: #4b5563;
+    color: #9ca3af;
+  }
+
+  .cg-theme-dark .cg-post-content th {
+    background: #1f2937;
+  }
+
+  .cg-theme-dark .cg-post-content th,
+  .cg-theme-dark .cg-post-content td {
+    border-color: #374151;
+  }
+</style>

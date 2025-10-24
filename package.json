@@ -1,0 +1,99 @@
+{
+  "name": "@content-growth/content-widget",
+  "version": "1.0.0",
+  "description": "Embed your Content Growth articles anywhere with beautiful, customizable components",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js"
+    },
+    "./widget": {
+      "types": "./dist/widget/index.d.ts",
+      "import": "./dist/widget/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js"
+    },
+    "./vue": {
+      "types": "./dist/vue/index.d.ts",
+      "import": "./dist/vue/index.js"
+    },
+    "./astro": {
+      "types": "./dist/astro/index.d.ts",
+      "import": "./dist/astro/index.js"
+    },
+    "./astro/BlogList.astro": "./dist/astro/BlogList.astro",
+    "./astro/BlogPost.astro": "./dist/astro/BlogPost.astro",
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc && cp -r src/astro/*.astro dist/astro/ && cp -r src/widget dist/widget-js && mv dist/widget-js dist/widget && cp src/styles.css dist/",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "content-growth",
+    "content",
+    "widget",
+    "react",
+    "vue",
+    "astro",
+    "cms",
+    "headless-cms",
+    "articles",
+    "markdown",
+    "vanilla-js",
+    "blog"
+  ],
+  "author": "Content Growth",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ContentGrowth/content-package"
+  },
+  "bugs": {
+    "url": "https://github.com/ContentGrowth/content-package/issues"
+  },
+  "homepage": "https://github.com/ContentGrowth/content-package#readme",
+  "peerDependencies": {
+    "astro": "^4.0.0 || ^5.0.0",
+    "react": "^17.0.0 || ^18.0.0",
+    "vue": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "astro": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "marked": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "astro": "^5.0.0",
+    "react": "^18.0.0",
+    "typescript": "^5.0.0",
+    "vue": "^3.0.0"
+  }
+}

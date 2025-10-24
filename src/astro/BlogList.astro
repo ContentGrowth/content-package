@@ -1,0 +1,139 @@
+---
+/**
+ * BlogList Component
+ * Displays a list of articles with pagination
+ */
+import type { BlogListProps } from '../types/index.js';
+import { ContentGrowthClient } from '../core/client.js';
+import { formatDate, calculateReadingTime } from '../core/utils.js';
+
+interface Props extends BlogListProps {}
+
+const {
+  apiKey,
+  baseUrl,
+  layout = 'cards',
+  displayMode = 'comfortable',
+  theme = 'light',
+  pageSize = 12,
+  tags = [],
+  category,
+  showPagination = true,
+  class: className = ''
+} = Astro.props;
+
+// Get current page from URL
+const url = new URL(Astro.request.url);
+const currentPage = parseInt(url.searchParams.get('page') || '1', 10);
+
+// Fetch articles
+const client = new ContentGrowthClient({ apiKey, baseUrl });
+const { articles, pagination } = await client.listArticles({
+  page: currentPage,
+  limit: pageSize,
+  tags: Array.isArray(tags) ? tags : tags.split(',').map(t => t.trim()).filter(Boolean),
+  category
+});
+
+// Build pagination URLs
+function buildPageUrl(page: number): string {
+  const newUrl = new URL(url);
+  newUrl.searchParams.set('page', page.toString());
+  return newUrl.pathname + newUrl.search;
+}
+---
+
+<div 
+  class={`cg-blog-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${className}`}
+  data-cg-widget="list"
+>
+  {articles.length === 0 ? (
+    <div class="cg-empty-state">
+      <p>No articles found.</p>
+    </div>
+  ) : (
+    <>
+      <div class={`cg-articles-grid ${layout === 'cards' ? 'cg-grid' : 'cg-list'}`}>
+        {articles.map((article) => {
+          const articleUrl = `/articles/${article.uuid}`;
+          const readingTime = calculateReadingTime(article.wordCount);
+          const publishedDate = formatDate(article.publishedAt);
+
+          return (
+            <article class="cg-article-card">
+              <a href={articleUrl} class="cg-card-link">
+                <div class="cg-card-content">
+                  {article.category && (
+                    <div class="cg-card-category">
+                      <span class="cg-category-badge">{article.category}</span>
+                    </div>
+                  )}
+                  
+                  <h2 class="cg-card-title">{article.title}</h2>
+                  
+                  {article.summary && (
+                    <p class="cg-card-summary">{article.summary}</p>
+                  )}
+                  
+                  <div class="cg-card-meta">
+                    <span class="cg-meta-author">{article.authorName}</span>
+                    <span class="cg-meta-separator">•</span>
+                    <time class="cg-meta-date" datetime={new Date(article.publishedAt * 1000).toISOString()}>
+                      {publishedDate}
+                    </time>
+                    <span class="cg-meta-separator">•</span>
+                    <span class="cg-meta-reading-time">{readingTime}</span>
+                  </div>
+                  
+                  {article.tags.length > 0 && (
+                    <div class="cg-card-tags">
+                      {article.tags.map((tag) => (
+                        <span class="cg-tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </a>
+            </article>
+          );
+        })}
+      </div>
+
+      {showPagination && pagination.totalPages > 1 && (
+        <nav class="cg-pagination" aria-label="Article pagination">
+          <div class="cg-pagination-info">
+            Page {pagination.page} of {pagination.totalPages}
+          </div>
+          
+          <div class="cg-pagination-controls">
+            {pagination.hasPrev && (
+              <a 
+                href={buildPageUrl(pagination.page - 1)} 
+                class="cg-pagination-btn cg-pagination-prev"
+                aria-label="Previous page"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Previous
+              </a>
+            )}
+            
+            {pagination.hasNext && (
+              <a 
+                href={buildPageUrl(pagination.page + 1)} 
+                class="cg-pagination-btn cg-pagination-next"
+                aria-label="Next page"
+              >
+                Next
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M8 4L14 10L8 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </a>
+            )}
+          </div>
+        </nav>
+      )}
+    </>
+  )}
+</div>
