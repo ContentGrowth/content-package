@@ -16,8 +16,9 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "noEmit": false,
+    "jsx": "react",
     "types": ["node"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/**/*.astro"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "src/**/*.astro", "src/**/*.vue", "src/widget/**/*.js"]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@content-growth/content-widget",
+  "name": "@contentgrowth/content-widget",
   "version": "1.0.0",
   "description": "Embed your Content Growth articles anywhere with beautiful, customizable components",
   "type": "module",
@@ -41,7 +41,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc && cp -r src/astro/*.astro dist/astro/ && cp -r src/widget dist/widget-js && mv dist/widget-js dist/widget && cp src/styles.css dist/",
+    "build": "tsc && cp -r src/astro/*.astro dist/astro/ && cp -r src/vue/*.vue dist/vue/ && cp -r src/widget dist/widget-js && mv dist/widget-js dist/widget && cp src/styles.css dist/",
     "dev": "tsc --watch",
     "prepublishOnly": "npm run build"
   },

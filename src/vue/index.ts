@@ -1,10 +1,12 @@
 /**
  * Content Growth Content Widget - Vue Components
+ * 
+ * Note: Vue components are not compiled by TypeScript.
+ * They should be processed by your Vue build tool (Vite, etc.).
+ * Import them directly from the .vue files in your Vue project.
  */
 
-export { default as ContentList } from './ContentList.vue';
-export { default as ContentViewer } from './ContentViewer.vue';
 export * from './composables.js';
 
-export type { VueContentListProps } from './ContentList.vue';
-export type { VueContentViewerProps } from './ContentViewer.vue';
+// Re-export types for Vue components
+export type { ContentListProps, ContentViewerProps } from '../types/index.js';

@@ -13,6 +13,7 @@ interface Props extends ContentViewerProps {}
 const {
   apiKey,
   uuid,
+  slug,
   baseUrl,
   theme = 'light',
   showBackButton = false,
@@ -20,9 +21,16 @@ const {
   class: className = ''
 } = Astro.props;
 
+// Validate that either uuid or slug is provided
+if (!uuid && !slug) {
+  throw new Error('Either uuid or slug must be provided to ContentViewer');
+}
+
 // Fetch article
 const client = new ContentGrowthClient({ apiKey, baseUrl });
-const article = await client.getArticle(uuid);
+const article = slug 
+  ? await client.getArticleBySlug(slug)
+  : await client.getArticle(uuid!);
 
 // Render markdown to HTML
 const contentHtml = marked(article.content);

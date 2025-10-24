@@ -64,6 +64,8 @@ export class ContentGrowthClient {
       category
     } = options;
 
+    this.log('[ContentGrowthClient] listArticles called with options:', options);
+
     // Build query params
     const params = new URLSearchParams({
       page: page.toString(),
@@ -81,12 +83,14 @@ export class ContentGrowthClient {
     const cacheKey = `articles:${params.toString()}`;
     const cached = this.getFromCache<ArticlesResponse>(cacheKey);
     if (cached) {
-      this.log('Cache hit:', cacheKey);
+      this.log('[ContentGrowthClient] Cache hit:', cacheKey);
       return cached;
     }
 
     const url = `${this.config.baseUrl}/widget/articles?${params}`;
+    this.log('[ContentGrowthClient] Fetching from URL:', url);
     const data = await this.fetch<ArticlesResponse>(url);
+    this.log('[ContentGrowthClient] Response received:', data);
 
     this.setCache(cacheKey, data);
     return data;
@@ -108,6 +112,28 @@ export class ContentGrowthClient {
     }
 
     const url = `${this.config.baseUrl}/widget/articles/${uuid}`;
+    const data = await this.fetch<ArticleWithContent>(url);
+
+    this.setCache(cacheKey, data);
+    return data;
+  }
+
+  /**
+   * Get a single article by slug
+   */
+  async getArticleBySlug(slug: string): Promise<ArticleWithContent> {
+    if (!slug) {
+      throw new ContentGrowthError('Article slug is required');
+    }
+
+    const cacheKey = `article:slug:${slug}`;
+    const cached = this.getFromCache<ArticleWithContent>(cacheKey);
+    if (cached) {
+      this.log('Cache hit:', cacheKey);
+      return cached;
+    }
+
+    const url = `${this.config.baseUrl}/widget/articles/slug/${slug}`;
     const data = await this.fetch<ArticleWithContent>(url);
 
     this.setCache(cacheKey, data);
@@ -162,7 +188,8 @@ export class ContentGrowthClient {
    * Internal fetch wrapper with error handling
    */
   private async fetch<T>(url: string): Promise<T> {
-    this.log('Fetching:', url);
+    console.log('[ContentGrowthClient] Fetching:', url);
+    console.log('[ContentGrowthClient] API Key:', this.config.apiKey);
 
     try {
       const response = await fetch(url, {
@@ -172,8 +199,11 @@ export class ContentGrowthClient {
         }
       });
 
+      console.log('[ContentGrowthClient] Response status:', response.status, response.statusText);
+
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('[ContentGrowthClient] Error response:', errorText);
         let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
         
         try {
@@ -191,14 +221,16 @@ export class ContentGrowthClient {
       }
 
       const data = await response.json();
-      this.log('Response:', data);
+      console.log('[ContentGrowthClient] Response data:', data);
       return data;
     } catch (error) {
       if (error instanceof ContentGrowthError) {
+        console.error('[ContentGrowthClient] ContentGrowthError:', error);
         throw error;
       }
 
       // Network or parsing error
+      console.error('[ContentGrowthClient] Network/Parse error:', error);
       throw new ContentGrowthError(
         `Failed to fetch from Content Growth API: ${(error as Error).message}`,
         undefined,

@@ -1,6 +1,10 @@
 /**
  * Content Growth Content Widget - Astro Components
+ * 
+ * Note: Astro components are not compiled by TypeScript.
+ * They are copied directly to dist/ during the build process.
+ * Import them directly from the .astro files in your Astro project.
  */
 
-export { default as ContentList } from './ContentList.astro';
-export { default as ContentViewer } from './ContentViewer.astro';
+// Re-export types for Astro components
+export type { ContentListProps, ContentViewerProps } from '../types/index.js';

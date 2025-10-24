@@ -12,11 +12,13 @@ export class ContentViewer {
     this.options = {
       displayMode: options.displayMode || 'inline', // 'inline' or 'modal'
       showBackButton: options.showBackButton !== false, // Default true, can be disabled
+      showSummary: options.showSummary !== false, // Default true, can be disabled
       onBack: options.onBack || null
     };
     
     this.article = null;
     this.loading = false;
+    this.summaryExpanded = true; // Summary visible by default
   }
 
   /**
@@ -64,6 +66,28 @@ export class ContentViewer {
         <article class="cg-viewer-content">
           <header class="cg-post-title-section">
             <h1 class="cg-post-title">${escapeHtml(this.article.title)}</h1>
+            
+            ${this.options.showSummary && this.article.summary && this.article.category !== 'announce' ? `
+            <div class="cg-ai-summary ${this.summaryExpanded ? 'expanded' : 'collapsed'}">
+              <div class="cg-ai-summary-header">
+                <div class="cg-ai-summary-label">
+                  <svg class="cg-ai-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span>AI Generated Summary</span>
+                </div>
+                <button class="cg-summary-toggle" aria-label="Toggle summary">
+                  <svg class="cg-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6l4 4 4-4" />
+                  </svg>
+                </button>
+              </div>
+              <div class="cg-ai-summary-content">
+                <p>${escapeHtml(this.article.summary)}</p>
+              </div>
+            </div>
+            ` : ''}
+            
             <div class="cg-post-meta">
               <span class="cg-meta-item">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -101,6 +125,29 @@ export class ContentViewer {
       const backBtn = this.container.querySelector('.cg-back-btn');
       if (backBtn) {
         backBtn.addEventListener('click', () => this.handleBack());
+      }
+    }
+    
+    // Add summary toggle handler
+    const summaryToggle = this.container.querySelector('.cg-summary-toggle');
+    if (summaryToggle) {
+      summaryToggle.addEventListener('click', () => this.toggleSummary());
+    }
+  }
+  
+  /**
+   * Toggle AI summary visibility
+   */
+  toggleSummary() {
+    this.summaryExpanded = !this.summaryExpanded;
+    const summaryEl = this.container.querySelector('.cg-ai-summary');
+    if (summaryEl) {
+      if (this.summaryExpanded) {
+        summaryEl.classList.add('expanded');
+        summaryEl.classList.remove('collapsed');
+      } else {
+        summaryEl.classList.add('collapsed');
+        summaryEl.classList.remove('expanded');
       }
     }
   }

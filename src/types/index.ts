@@ -7,6 +7,7 @@
  */
 export interface Article {
   uuid: string;
+  slug: string;
   title: string;
   category: string | null;
   authorName: string;
@@ -215,9 +216,14 @@ export interface ContentViewerProps {
   apiKey: string;
 
   /**
-   * Article UUID
+   * Article UUID (use either uuid or slug)
    */
-  uuid: string;
+  uuid?: string;
+
+  /**
+   * Article slug (use either uuid or slug)
+   */
+  slug?: string;
 
   /**
    * API base URL

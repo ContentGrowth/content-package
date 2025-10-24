@@ -28,10 +28,17 @@ const currentPage = parseInt(url.searchParams.get('page') || '1', 10);
 
 // Fetch articles
 const client = new ContentGrowthClient({ apiKey, baseUrl });
+
+// Process tags
+let processedTags: string[] | undefined;
+if (tags) {
+  processedTags = Array.isArray(tags) ? tags : tags.split(',').map(t => t.trim()).filter(Boolean);
+}
+
 const { articles, pagination } = await client.listArticles({
   page: currentPage,
   limit: pageSize,
-  tags: Array.isArray(tags) ? tags : tags.split(',').map(t => t.trim()).filter(Boolean),
+  tags: processedTags,
   category
 });
 
