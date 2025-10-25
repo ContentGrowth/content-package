@@ -7,6 +7,9 @@ import { ContentList } from './components/content-list.js';
 import { ContentViewer } from './components/content-viewer.js';
 
 export class ContentGrowthWidget {
+  // Version will be injected during build from package.json
+  static version = '__VERSION__';
+  
   constructor(container, config) {
     console.log('[ContentGrowthWidget] Constructor called with config:', config);
     

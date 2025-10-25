@@ -9,6 +9,13 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Read version from package.json
+const packageJsonPath = path.join(__dirname, '../../package.json');
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+const VERSION = packageJson.version;
+
+console.log(`📦 Building widget v${VERSION}`);
+
 // Paths
 const srcDir = __dirname; // Current directory is src/widget
 const distDir = path.join(__dirname, '../../dist/widget'); // Output to dist/widget
@@ -71,20 +78,70 @@ if (fs.existsSync(markedUmdPath)) {
   `;
 }
 
-// Helper to remove import/export statements
-function cleanModule(code) {
-  return code
+// Helper to remove import/export statements and inject version
+function cleanModule(code, injectVersion = false) {
+  let cleaned = code
     .replace(/import\s+.*?from\s+['"].*?['"];?/g, '')
     .replace(/import\s+['"].*?['"];?/g, '')
     .replace(/export\s+/g, '')
     .replace(/export\s*{[^}]*};?/g, '')
+    .trim();
+  
+  // Replace __VERSION__ placeholder with actual version
+  if (injectVersion) {
+    cleaned = cleaned.replace(/__VERSION__/g, VERSION);
+  }
+  
+  return cleaned;
+}
+
+// Simple JS minifier - removes comments, extra whitespace, console.logs (except version)
+function minifyJS(code) {
+  return code
+    // Remove multi-line comments (but preserve the header)
+    .replace(/\/\*\*[\s\S]*?\*\//g, (match, offset) => {
+      // Keep the very first comment (header with version)
+      if (offset < 100) return match;
+      return '';
+    })
+    // Remove single-line comments
+    .replace(/\/\/[^\n]*/g, '')
+    // Remove console.log except the version one
+    .replace(/console\.log\([^)]*\);?/g, (match) => {
+      if (match.includes('Loaded successfully')) return match;
+      return '';
+    })
+    // Remove extra whitespace
+    .replace(/\s+/g, ' ')
+    // Remove spaces around operators and punctuation
+    .replace(/\s*([{}();:,=<>!+\-*/%&|?])\s*/g, '$1')
+    // Remove space after 'function' and 'return'
+    .replace(/function\s+/g, 'function ')
+    .replace(/return\s+/g, 'return ')
+    // Add back necessary spaces for keywords
+    .replace(/}(else|catch|finally)/g, '} $1')
+    .replace(/(if|while|for|switch|catch)\(/g, '$1 (')
+    .trim();
+}
+
+// Simple CSS minifier
+function minifyCSS(code) {
+  return code
+    // Remove comments
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    // Remove extra whitespace
+    .replace(/\s+/g, ' ')
+    // Remove spaces around selectors and properties
+    .replace(/\s*([{}:;,>+~])\s*/g, '$1')
+    // Remove trailing semicolons
+    .replace(/;}/g, '}')
     .trim();
 }
 
 // Bundle JS (IIFE wrapper with all dependencies)
 const bundledJS = `/**
  * Content Growth Widget - Standalone Bundle
- * Version: 1.1.0
+ * Version: ${VERSION}
  * https://www.content-growth.com
  */
 (function(window) {
@@ -105,7 +162,7 @@ const bundledJS = `/**
   ${cleanModule(files.components.contentViewer)}
   
   // ===== Main Widget Class =====
-  ${cleanModule(files.widget)}
+  ${cleanModule(files.widget, true)}
   
   // ===== Auto-initialization =====
   ${cleanModule(files.index)}
@@ -113,25 +170,49 @@ const bundledJS = `/**
   // ===== Expose to window =====
   window.ContentGrowthWidget = ContentGrowthWidget;
   
-  console.log('[ContentGrowthWidget] Loaded successfully v1.1.0');
+  console.log('[ContentGrowthWidget] Loaded successfully v${VERSION}');
   
 })(window);
 `;
 
-// Write bundled files to dist/widget/
-fs.writeFileSync(path.join(distDir, 'widget.js'), bundledJS);
-fs.writeFileSync(path.join(distDir, 'widget.css'), css);
+// Minify the bundles
+console.log('🔧 Minifying bundles...');
+const minifiedJS = minifyJS(bundledJS);
+const minifiedCSS = minifyCSS(css);
 
-// Also write to release/ folder
-fs.writeFileSync(path.join(releaseDir, 'widget.js'), bundledJS);
-fs.writeFileSync(path.join(releaseDir, 'widget.css'), css);
+// Calculate sizes
+const originalJSSize = bundledJS.length;
+const minifiedJSSize = minifiedJS.length;
+const originalCSSSize = css.length;
+const minifiedCSSSize = minifiedCSS.length;
 
-console.log('✅ Widget bundled successfully!');
-console.log('   📦 dist/widget/widget.js');
-console.log('   📦 dist/widget/widget.css');
-console.log('   📦 release/widget.js');
-console.log('   📦 release/widget.css');
+const jsSavings = ((1 - minifiedJSSize / originalJSSize) * 100).toFixed(1);
+const cssSavings = ((1 - minifiedCSSSize / originalCSSSize) * 100).toFixed(1);
+
+// Write minified files to dist/widget/
+fs.writeFileSync(path.join(distDir, 'widget.js'), minifiedJS);
+fs.writeFileSync(path.join(distDir, 'widget.css'), minifiedCSS);
+
+// Write unminified files for debugging (with .dev suffix)
+fs.writeFileSync(path.join(distDir, 'widget.dev.js'), bundledJS);
+fs.writeFileSync(path.join(distDir, 'widget.dev.css'), css);
+
+// Write minified to release/ folder
+fs.writeFileSync(path.join(releaseDir, 'widget.js'), minifiedJS);
+fs.writeFileSync(path.join(releaseDir, 'widget.css'), minifiedCSS);
+
+console.log('✅ Widget bundled and minified successfully!');
 console.log('');
-console.log('Bundle size:');
-console.log(`   JS:  ${(bundledJS.length / 1024).toFixed(2)} KB`);
-console.log(`   CSS: ${(css.length / 1024).toFixed(2)} KB`);
+console.log('📦 Production (minified):');
+console.log('   dist/widget/widget.js');
+console.log('   dist/widget/widget.css');
+console.log('   release/widget.js');
+console.log('   release/widget.css');
+console.log('');
+console.log('🔍 Development (unminified):');
+console.log('   dist/widget/widget.dev.js');
+console.log('   dist/widget/widget.dev.css');
+console.log('');
+console.log('📊 Bundle sizes:');
+console.log(`   JS:  ${(originalJSSize / 1024).toFixed(2)} KB → ${(minifiedJSSize / 1024).toFixed(2)} KB (saved ${jsSavings}%)`);
+console.log(`   CSS: ${(originalCSSSize / 1024).toFixed(2)} KB → ${(minifiedCSSSize / 1024).toFixed(2)} KB (saved ${cssSavings}%)`);

@@ -16,11 +16,17 @@ The frontend widget is a **pure JavaScript solution** that requires no build too
 ### Via CDN (Recommended)
 
 ```html
-<!-- Load widget script -->
+<!-- Load widget script (minified for production) -->
 <script src="https://unpkg.com/@contentgrowth/content-widget@latest/dist/widget/widget.js"></script>
 
-<!-- Load widget styles -->
+<!-- Load widget styles (minified for production) -->
 <link rel="stylesheet" href="https://unpkg.com/@contentgrowth/content-widget@latest/dist/styles.css">
+```
+
+**Development versions** (unminified, easier to debug):
+```html
+<script src="https://unpkg.com/@contentgrowth/content-widget@latest/dist/widget/widget.dev.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@contentgrowth/content-widget@latest/dist/widget/widget.dev.css">
 ```
 
 ### Via NPM
@@ -641,10 +647,37 @@ The widget is responsive by default, but ensure container has proper width:
 
 ### 4. Performance
 
-Load widget script asynchronously:
+**Use minified version in production:**
+```html
+<!-- Production: minified, optimized for bandwidth -->
+<script src="https://unpkg.com/@contentgrowth/content-widget@latest/dist/widget/widget.js"></script>
+```
 
+**Load asynchronously for better page performance:**
 ```html
 <script async src="https://unpkg.com/@contentgrowth/content-widget@latest/dist/widget/widget.js"></script>
+```
+
+**Use development version for debugging:**
+```html
+<!-- Development: unminified, easier to debug -->
+<script src="https://unpkg.com/@contentgrowth/content-widget@latest/dist/widget/widget.dev.js"></script>
+```
+
+---
+
+## Version Information
+
+Check the widget version programmatically:
+
+```javascript
+console.log('Widget version:', ContentGrowthWidget.version);
+// Output: Widget version: 1.1.1
+```
+
+The version is also logged to the console when the widget loads:
+```
+[ContentGrowthWidget] Loaded successfully v1.1.1
 ```
 
 ---
@@ -658,6 +691,7 @@ Load widget script asynchronously:
 2. Container element exists
 3. Script loaded successfully
 4. No console errors
+5. Check widget version matches expected: `ContentGrowthWidget.version`
 
 ### Styling Issues
 
