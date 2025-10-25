@@ -19,6 +19,11 @@ const {
   tags = [],
   category,
   showPagination = true,
+  linkPattern = '/articles/{uuid}',
+  showTags = false,
+  showAiSummary = true,
+  summaryMaxLength,
+  linkTarget,
   class: className = ''
 } = Astro.props;
 
@@ -32,21 +37,35 @@ const client = new ContentGrowthClient({ apiKey, baseUrl });
 // Process tags
 let processedTags: string[] | undefined;
 if (tags) {
-  processedTags = Array.isArray(tags) ? tags : tags.split(',').map(t => t.trim()).filter(Boolean);
+  if (Array.isArray(tags)) {
+    processedTags = tags;
+  } else {
+    processedTags = tags.split(',').map(t => t.trim()).filter(Boolean);
+  }
 }
 
-const { articles, pagination } = await client.listArticles({
+const options = {
   page: currentPage,
   limit: pageSize,
   tags: processedTags,
-  category
-});
+  category: category
+};
+const result = await client.listArticles(options);
+const articles = result.articles;
+const pagination = result.pagination;
 
 // Build pagination URLs
 function buildPageUrl(page: number): string {
   const newUrl = new URL(url);
   newUrl.searchParams.set('page', page.toString());
   return newUrl.pathname + newUrl.search;
+}
+
+// Truncate summary text
+function truncateSummary(text: string | null, maxLength?: number): string {
+  if (!text) return '';
+  if (!maxLength || text.length <= maxLength) return text;
+  return text.substring(0, maxLength).trim() + '...';
 }
 ---
 
@@ -62,13 +81,25 @@ function buildPageUrl(page: number): string {
     <>
       <div class={`cg-articles-grid ${layout === 'cards' ? 'cg-grid' : 'cg-list'}`}>
         {articles.map((article) => {
-          const articleUrl = `/articles/${article.uuid}`;
+          // Build article URL from pattern
+          const articleUrl = linkPattern
+            .replace('{uuid}', article.uuid)
+            .replace('{slug}', article.slug)
+            .replace('{category}', article.category || '');
+          
+          // Build link target from pattern
+          const articleTarget = linkTarget
+            ? linkTarget
+                .replace('{uuid}', article.uuid)
+                .replace('{id}', article.uuid)
+            : undefined;
+          
           const readingTime = calculateReadingTime(article.wordCount);
           const publishedDate = formatDate(article.publishedAt);
 
           return (
             <article class="cg-article-card">
-              <a href={articleUrl} class="cg-card-link">
+              <a href={articleUrl} target={articleTarget} class="cg-card-link">
                 <div class="cg-card-content">
                   {article.category && (
                     <div class="cg-card-category">
@@ -78,8 +109,8 @@ function buildPageUrl(page: number): string {
                   
                   <h2 class="cg-card-title">{article.title}</h2>
                   
-                  {article.summary && (
-                    <p class="cg-card-summary">{article.summary}</p>
+                  {showAiSummary && article.summary && (
+                    <p class="cg-card-summary">{truncateSummary(article.summary, summaryMaxLength)}</p>
                   )}
                   
                   <div class="cg-card-meta">
@@ -92,7 +123,7 @@ function buildPageUrl(page: number): string {
                     <span class="cg-meta-reading-time">{readingTime}</span>
                   </div>
                   
-                  {article.tags.length > 0 && (
+                  {showTags && article.tags && article.tags.length > 0 && (
                     <div class="cg-card-tags">
                       {article.tags.map((tag) => (
                         <span class="cg-tag">{tag}</span>

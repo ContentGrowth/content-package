@@ -885,6 +885,60 @@ a.cg-card {
   margin-bottom: 1.5rem;
 }
 
+/* AI Summary Box - Special styling for AI-generated summaries */
+.cg-ai-summary {
+  background: linear-gradient(to right, #eff6ff, #dbeafe);
+  border-left: 4px solid #3b82f6;
+  border-radius: 0 var(--cg-radius) var(--cg-radius) 0;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.cg-theme-dark .cg-ai-summary {
+  background: linear-gradient(to right, #1e3a5f, #1e40af);
+  border-left-color: #60a5fa;
+}
+
+.cg-ai-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.cg-ai-summary-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #2563eb;
+}
+
+.cg-theme-dark .cg-ai-summary-icon {
+  color: #60a5fa;
+}
+
+.cg-ai-summary-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #1d4ed8;
+}
+
+.cg-theme-dark .cg-ai-summary-label {
+  color: #93c5fd;
+}
+
+.cg-ai-summary-text {
+  font-size: 0.875rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.cg-theme-dark .cg-ai-summary-text {
+  color: #d1d5db;
+}
+
 .cg-post-info {
   display: flex;
   align-items: center;

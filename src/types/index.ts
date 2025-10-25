@@ -201,6 +201,43 @@ export interface ContentListProps {
   showPagination?: boolean;
 
   /**
+   * URL pattern for article links
+   * Supports placeholders: {uuid}, {slug}, {category}
+   * @default '/articles/{uuid}'
+   * @example '/blog/{category}/{slug}'
+   */
+  linkPattern?: string;
+
+  /**
+   * Show article tags
+   * @default false
+   */
+  showTags?: boolean;
+
+  /**
+   * Show AI-generated summary in cards/rows
+   * @default true
+   */
+  showAiSummary?: boolean;
+
+  /**
+   * Maximum length of summary text in cards/rows (in characters)
+   * If not set, shows full summary
+   * @default undefined (no limit)
+   * @example 150
+   */
+  summaryMaxLength?: number;
+
+  /**
+   * Link target attribute
+   * Supports placeholders: {uuid}, {id} for article ID
+   * @default undefined (same tab)
+   * @example '_blank' for new tab
+   * @example '{uuid}' for article ID as target
+   */
+  linkTarget?: string;
+
+  /**
    * Custom CSS class
    */
   class?: string;
@@ -247,6 +284,12 @@ export interface ContentViewerProps {
    * Back button URL
    */
   backUrl?: string;
+
+  /**
+   * Show AI-generated summary
+   * @default true
+   */
+  showAiSummary?: boolean;
 
   /**
    * Custom CSS class
