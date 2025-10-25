@@ -30,7 +30,8 @@ export class ContentGrowthWidget {
       externalTarget: config.externalTarget || config['external-target'] || 'article-{id}', // Tab name with {id}
       pageSize: config.pageSize || config['page-size'] || 12,
       mode: config.mode || 'list', // 'list' or 'article-only'
-      articleId: config.articleId || config['article-id'] // Article ID for article-only mode
+      articleId: config.articleId || config['article-id'], // Article ID for article-only mode
+      slug: config.slug // Article slug for article-only mode (alternative to articleId)
     };
 
     console.log('[ContentGrowthWidget] Final config:', this.config);
@@ -62,9 +63,14 @@ export class ContentGrowthWidget {
     this.container.setAttribute('data-theme', this.config.theme);
 
     // Check if article-only mode
-    if (this.config.mode === 'article-only' && this.config.articleId) {
-      console.log('[ContentGrowthWidget] Article-only mode, loading article:', this.config.articleId);
-      this.showPostInline(this.config.articleId);
+    if (this.config.mode === 'article-only') {
+      if (this.config.slug) {
+        console.log('[ContentGrowthWidget] Article-only mode, loading article by slug:', this.config.slug);
+        this.showPostInlineBySlug(this.config.slug);
+      } else if (this.config.articleId) {
+        console.log('[ContentGrowthWidget] Article-only mode, loading article by ID:', this.config.articleId);
+        this.showPostInline(this.config.articleId);
+      }
     } else {
       // Create views
       this.showList();
@@ -138,6 +144,28 @@ export class ContentGrowthWidget {
     });
 
     this.contentViewer.loadArticle(uuid);
+  }
+
+  /**
+   * Show content inline by slug (replaces list)
+   */
+  showPostInlineBySlug(slug) {
+    this.container.innerHTML = '';
+
+    const viewerContainer = document.createElement('div');
+    viewerContainer.className = 'cg-viewer-view';
+    this.container.appendChild(viewerContainer);
+
+    // In article-only mode, don't show back button (no list to go back to)
+    const showBackButton = this.config.mode !== 'article-only';
+
+    this.contentViewer = new ContentViewer(viewerContainer, this.api, {
+      displayMode: 'inline',
+      showBackButton: showBackButton,
+      onBack: showBackButton ? () => this.showList() : null
+    });
+
+    this.contentViewer.loadArticleBySlug(slug);
   }
 
   /**

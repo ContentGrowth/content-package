@@ -22,7 +22,7 @@ export class ContentViewer {
   }
 
   /**
-   * Load and display an article
+   * Load and display an article by UUID
    */
   async loadArticle(uuid) {
     if (this.loading) return;
@@ -32,6 +32,26 @@ export class ContentViewer {
 
     try {
       this.article = await this.api.fetchArticle(uuid);
+      this.render();
+    } catch (error) {
+      this.showError('Failed to load article. Please try again.');
+      console.error(error);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  /**
+   * Load and display an article by slug
+   */
+  async loadArticleBySlug(slug) {
+    if (this.loading) return;
+    
+    this.loading = true;
+    this.showLoading();
+
+    try {
+      this.article = await this.api.fetchArticleBySlug(slug);
       this.render();
     } catch (error) {
       this.showError('Failed to load article. Please try again.');

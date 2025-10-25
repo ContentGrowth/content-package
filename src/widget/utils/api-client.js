@@ -120,6 +120,54 @@ export class ContentGrowthAPI {
   }
 
   /**
+   * Fetch single article by slug
+   */
+  async fetchArticleBySlug(slug) {
+    const url = `${this.baseUrl}/widget/articles/slug/${slug}`;
+    const cacheKey = url;
+    console.log('[ContentGrowthAPI] fetchArticleBySlug called for slug:', slug);
+    console.log('[ContentGrowthAPI] Request URL:', url);
+
+    // Check cache
+    const cached = this.getFromCache(cacheKey);
+    if (cached) {
+      console.log('[ContentGrowthAPI] Returning cached article');
+      return cached;
+    }
+
+    try {
+      console.log('[ContentGrowthAPI] Making fetch request with headers:', {
+        'X-API-Key': this.apiKey
+      });
+      
+      const response = await fetch(url, {
+        headers: {
+          'X-API-Key': this.apiKey
+        }
+      });
+
+      console.log('[ContentGrowthAPI] Response status:', response.status, response.statusText);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[ContentGrowthAPI] Error response body:', errorText);
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('[ContentGrowthAPI] Response data:', data);
+      
+      // Cache the result
+      this.setCache(cacheKey, data);
+      
+      return data;
+    } catch (error) {
+      console.error('[ContentGrowthAPI] Failed to fetch article by slug:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get from cache if not expired
    */
   getFromCache(key) {

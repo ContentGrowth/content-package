@@ -29,9 +29,14 @@ export class ContentCard {
       link.className = `cg-card cg-card--${this.displayMode}`;
       link.dataset.contentId = this.article.uuid;
       
-      // Generate URL and target
-      const url = this.externalUrlPattern.replace('{id}', this.article.uuid);
-      const target = this.externalTarget.replace('{id}', this.article.uuid);
+      // Generate URL and target - support both {id} and {slug} placeholders
+      let url = this.externalUrlPattern
+        .replace('{id}', this.article.uuid)
+        .replace('{slug}', this.article.slug || this.article.uuid);
+      
+      let target = this.externalTarget
+        .replace('{id}', this.article.uuid)
+        .replace('{slug}', this.article.slug || this.article.uuid);
       
       link.href = url;
       link.target = target;

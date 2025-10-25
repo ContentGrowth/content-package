@@ -43,6 +43,7 @@
   "scripts": {
     "build": "tsc && cp -r src/astro/*.astro dist/astro/ && cp -r src/vue/*.vue dist/vue/ && cp -r src/widget dist/widget-js && mv dist/widget-js dist/widget && cp src/styles.css dist/",
     "dev": "tsc --watch",
+    "release": "./release.sh",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
