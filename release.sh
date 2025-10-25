@@ -26,11 +26,15 @@ echo ""
 echo "📁 Step 2: Preparing release folder..."
 mkdir -p release
 cp dist/widget/widget.js release/widget.js
+cp dist/widget/widget.dev.js release/widget.dev.js
 cp dist/styles.css release/widget.css
+cp dist/styles.dev.css release/widget.dev.css
 
 echo "✅ Widget files copied to release/"
 echo "   - release/widget.js"
+echo "   - release/widget.dev.js"
 echo "   - release/widget.css"
+echo "   - release/widget.dev.css"
 echo ""
 
 # Step 3: Try to copy to wwwsite/public (if folder structure exists)
