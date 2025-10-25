@@ -84,8 +84,8 @@ export class ContentViewer {
         ` : ''}
         
         <article class="cg-viewer-content">
-          <header class="cg-post-title-section">
-            <h1 class="cg-post-title">${escapeHtml(this.article.title)}</h1>
+          <header class="cg-content-header">
+            <h1 class="cg-content-title">${escapeHtml(this.article.title)}</h1>
             
             ${this.options.showSummary && this.article.summary && this.article.category !== 'announce' ? `
             <div class="cg-ai-summary ${this.summaryExpanded ? 'expanded' : 'collapsed'}">
@@ -108,7 +108,7 @@ export class ContentViewer {
             </div>
             ` : ''}
             
-            <div class="cg-post-meta">
+            <div class="cg-content-meta">
               <span class="cg-meta-item">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M8 8C9.65685 8 11 6.65685 11 5C11 3.34315 9.65685 2 8 2C6.34315 2 5 3.34315 5 5C5 6.65685 6.34315 8 8 8Z" stroke="currentColor" stroke-width="1.5"/>
@@ -133,7 +133,7 @@ export class ContentViewer {
             </div>
           </header>
           
-          <div class="cg-post-body">
+          <div class="cg-content-body">
             ${content}
           </div>
         </article>

@@ -10,7 +10,7 @@
       <p>{{ error || 'Article not found' }}</p>
     </div>
     <article v-else>
-      <div v-if="showBackButton" class="cg-post-header">
+      <div v-if="showBackButton" class="cg-content-header-back">
         <a :href="backUrl" class="cg-back-btn">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -19,12 +19,12 @@
         </a>
       </div>
 
-      <header class="cg-post-meta">
-        <div v-if="article.category" class="cg-post-category">
+      <header class="cg-content-header">
+        <div v-if="article.category" class="cg-content-category">
           <span class="cg-category-badge">{{ article.category }}</span>
         </div>
         
-        <h1 class="cg-post-title">{{ article.title }}</h1>
+        <h1 class="cg-content-title">{{ article.title }}</h1>
         
         <div v-if="showAiSummary && article.summary" class="cg-ai-summary">
           <div class="cg-ai-summary-header">
@@ -36,7 +36,7 @@
           <p class="cg-ai-summary-text">{{ article.summary }}</p>
         </div>
         
-        <div class="cg-post-info">
+        <div class="cg-content-meta">
           <span class="cg-info-author">{{ article.authorName }}</span>
           <span class="cg-info-separator">•</span>
           <time class="cg-info-date" :datetime="new Date(article.publishedAt * 1000).toISOString()">
@@ -46,12 +46,12 @@
           <span class="cg-info-reading-time">{{ calculateReadingTime(article.wordCount) }}</span>
         </div>
         
-        <div v-if="article.tags.length > 0" class="cg-post-tags">
+        <div v-if="article.tags.length > 0" class="cg-content-tags">
           <span v-for="tag in article.tags" :key="tag" class="cg-tag">{{ tag }}</span>
         </div>
       </header>
 
-      <div class="cg-post-content" v-html="contentHtml"></div>
+      <div class="cg-content-body" v-html="contentHtml"></div>
     </article>
   </div>
 </template>

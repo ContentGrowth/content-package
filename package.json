@@ -41,7 +41,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc && cp -r src/astro/*.astro dist/astro/ && cp -r src/vue/*.vue dist/vue/ && cp -r src/widget dist/widget-js && mv dist/widget-js dist/widget && cp src/styles.css dist/",
+    "build": "npm run build:tsc && npm run build:widget",
+    "build:tsc": "tsc && cp -r src/astro/*.astro dist/astro/ && cp -r src/vue/*.vue dist/vue/ && cp src/styles.css dist/",
+    "build:widget": "node src/widget/build-widget.js",
     "dev": "tsc --watch",
     "release": "./release.sh",
     "prepublishOnly": "npm run build"
