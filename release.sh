@@ -27,14 +27,14 @@ echo "📁 Step 2: Preparing release folder..."
 mkdir -p release
 cp dist/widget/widget.js release/widget.js
 cp dist/widget/widget.dev.js release/widget.dev.js
-cp dist/styles.css release/widget.css
-cp dist/styles.dev.css release/widget.dev.css
+cp dist/widget/widget.css release/widget.css
+cp dist/widget/widget.dev.css release/widget.dev.css
 
 echo "✅ Widget files copied to release/"
-echo "   - release/widget.js"
-echo "   - release/widget.dev.js"
-echo "   - release/widget.css"
-echo "   - release/widget.dev.css"
+echo "   - release/widget.js (minified)"
+echo "   - release/widget.dev.js (unminified)"
+echo "   - release/widget.css (minified)"
+echo "   - release/widget.dev.css (unminified)"
 echo ""
 
 # Step 3: Try to copy to wwwsite/public (if folder structure exists)
@@ -43,8 +43,14 @@ WWWSITE_PUBLIC="../wwwsite/public"
 
 if [ -d "$WWWSITE_PUBLIC" ]; then
   cp release/widget.js "$WWWSITE_PUBLIC/widget.js"
+  cp release/widget.dev.js "$WWWSITE_PUBLIC/widget.dev.js"
   cp release/widget.css "$WWWSITE_PUBLIC/widget.css"
+  cp release/widget.dev.css "$WWWSITE_PUBLIC/widget.dev.css"
   echo "✅ Copied to $WWWSITE_PUBLIC"
+  echo "   - widget.js (minified)"
+  echo "   - widget.dev.js (unminified)"
+  echo "   - widget.css (minified)"
+  echo "   - widget.dev.css (unminified)"
 else
   echo "⚠️  wwwsite/public not found at $WWWSITE_PUBLIC"
   echo "   You can manually copy files from release/ folder"
@@ -75,8 +81,10 @@ echo ""
 echo "✨ Release preparation complete!"
 echo ""
 echo "📦 Files ready in release/ folder:"
-echo "   - widget.js (standalone widget)"
-echo "   - widget.css (widget styles)"
+echo "   - widget.js (minified, production)"
+echo "   - widget.dev.js (unminified, debugging)"
+echo "   - widget.css (minified, production)"
+echo "   - widget.dev.css (unminified, debugging)"
 echo ""
 echo "Next steps:"
 echo "1. Test the widget in wwwsite"
