@@ -47,6 +47,25 @@ export function truncate(text, maxLength = 150) {
 }
 
 /**
+ * Truncate text to specified max UTF-8 byte length
+ */
+export function truncateBytes(text, maxBytes) {
+  if (!text || !maxBytes || maxBytes <= 0) return text || '';
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(text);
+  if (bytes.length <= maxBytes) return text;
+  // Binary search for max codepoint length within byte budget
+  let lo = 0, hi = text.length;
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi + 1) / 2);
+    const slice = text.slice(0, mid);
+    const len = encoder.encode(slice).length;
+    if (len <= maxBytes) lo = mid; else hi = mid - 1;
+  }
+  return text.slice(0, lo).trimEnd() + '...';
+}
+
+/**
  * Escape HTML to prevent XSS
  */
 export function escapeHtml(text) {

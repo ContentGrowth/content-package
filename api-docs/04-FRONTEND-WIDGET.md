@@ -65,6 +65,8 @@ Display a list of articles:
         mode: 'list',
         category: 'guide',
         layoutMode: 'cards',
+        displayMode: 'expanded', // show AI summary in list
+        aiSummaryMaxBytes: 360,  // clamp AI summary to keep cards even
         pageSize: 12
       }
     );
@@ -110,6 +112,7 @@ Display a single article:
 | `tags` | string[] | `[]` | Filter by tags |
 | `layoutMode` | `'cards'` \| `'rows'` | `'cards'` | List layout mode |
 | `displayMode` | `'compact'` \| `'comfortable'` \| `'spacious'` | `'comfortable'` | Display density |
+| `aiSummaryMaxBytes` | number | - | Max UTF-8 bytes of AI summary to render in list items (cards/rows). If omitted, full summary shows and card heights may vary. |
 | `pageSize` | number | `12` | Articles per page |
 | `theme` | `'light'` \| `'dark'` | `'light'` | Color theme |
 | `viewerMode` | `'inline'` \| `'modal'` \| `'external'` | `'inline'` | How articles open |

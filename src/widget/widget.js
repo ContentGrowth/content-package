@@ -22,9 +22,11 @@ export class ContentGrowthWidget {
       apiKey: config.apiKey || config['api-key'],
       baseUrl: config.baseUrl || 'https://api.content-growth.com',
       tags: this.parseTags(config.tags),
+      category: config.category,
       theme: config.theme || 'light',
       layoutMode: config.layoutMode || config['layout-mode'] || 'cards', // 'cards' or 'rows'
       displayMode: config.displayMode || config['display-mode'] || 'comfortable',
+      aiSummaryMaxBytes: config.aiSummaryMaxBytes || config['ai-summary-max-bytes'],
       viewerMode: config.viewerMode || config['viewer-mode'] || 'inline', // 'inline' | 'modal' | 'external'
       externalUrlPattern: config.externalUrlPattern || config['external-url-pattern'] || '/article/{id}',
       externalTarget: config.externalTarget || config['external-target'] || 'article-{id}', // Tab name with {id}
@@ -94,7 +96,9 @@ export class ContentGrowthWidget {
       layoutMode: this.config.layoutMode,
       displayMode: this.config.displayMode,
       pageSize: this.config.pageSize,
-      tags: this.config.tags
+      tags: this.config.tags,
+      category: this.config.category,
+      aiSummaryMaxBytes: this.config.aiSummaryMaxBytes
     });
 
     this.contentList = new ContentList(listContainer, this.api, {
@@ -102,6 +106,8 @@ export class ContentGrowthWidget {
       displayMode: this.config.displayMode,
       pageSize: this.config.pageSize,
       tags: this.config.tags,
+      category: this.config.category,
+      aiSummaryMaxBytes: this.config.aiSummaryMaxBytes,
       viewerMode: this.config.viewerMode,
       externalUrlPattern: this.config.externalUrlPattern,
       externalTarget: this.config.externalTarget,

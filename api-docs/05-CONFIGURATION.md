@@ -28,6 +28,23 @@ apiKey: 'pk_live_abc123xyz'
 
 ---
 
+### aiSummaryMaxBytes (Widget)
+
+**Type:** `number`  
+**Required:** No  
+**Default:** `undefined` (no clamping)  
+**Description:** Maximum UTF-8 byte length of the AI summary to render in list items (cards/rows). When set, summaries are truncated to ensure consistent card heights. When omitted, full summaries are shown and card sizes may vary.
+
+```javascript
+aiSummaryMaxBytes: 360   // Roughly ~360 ASCII chars, fewer for multi-byte
+```
+
+**Notes:**
+- Truncation is UTF-8 byte-aware to avoid breaking multi-byte characters.
+- Applies to list items; the full article view shows the complete summary.
+
+---
+
 ### baseUrl
 
 **Type:** `string`  
@@ -622,6 +639,7 @@ These must always be provided:
 | `theme` | `'light'` |
 | `category` | `undefined` (all) |
 | `tags` | `undefined` (all) |
+| `aiSummaryMaxBytes` | `undefined` (no clamp) |
 
 ---
 

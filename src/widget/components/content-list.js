@@ -14,6 +14,8 @@ export class ContentList {
       displayMode: options.displayMode || 'comfortable',
       pageSize: parseInt(options.pageSize) || 12,
       tags: options.tags || [],
+      category: options.category,
+      aiSummaryMaxBytes: options.aiSummaryMaxBytes,
       viewerMode: options.viewerMode || 'inline', // 'inline' | 'modal' | 'external'
       externalUrlPattern: options.externalUrlPattern || '/article/{id}',
       externalTarget: options.externalTarget || 'article-{id}',
@@ -84,13 +86,15 @@ export class ContentList {
       console.log('[ContentList] Calling api.fetchArticles with:', {
         page,
         limit: this.options.pageSize,
-        tags: this.options.tags
+        tags: this.options.tags,
+        category: this.options.category
       });
       
       const data = await this.api.fetchArticles({
         page,
         limit: this.options.pageSize,
-        tags: this.options.tags
+        tags: this.options.tags,
+        category: this.options.category
       });
 
       console.log('[ContentList] Received data:', data);
@@ -139,6 +143,7 @@ export class ContentList {
         viewerMode: this.options.viewerMode,
         externalUrlPattern: this.options.externalUrlPattern,
         externalTarget: this.options.externalTarget,
+        aiSummaryMaxBytes: this.options.aiSummaryMaxBytes,
         onExpand: (article, cardElement) => this.handleExpand(article, cardElement),
         onClick: (article) => this.handleArticleClick(article)
       });

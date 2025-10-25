@@ -2,7 +2,7 @@
  * Content Card Component
  * Displays a single content item in compact or expanded mode
  */
-import { formatDate, calculateReadingTime, escapeHtml } from '../utils/helpers.js';
+import { formatDate, calculateReadingTime, escapeHtml, truncateBytes } from '../utils/helpers.js';
 
 export class ContentCard {
   constructor(article, options = {}) {
@@ -13,6 +13,7 @@ export class ContentCard {
     this.externalTarget = options.externalTarget || 'article-{id}';
     this.onExpand = options.onExpand || null;
     this.onClick = options.onClick || null;
+    this.aiSummaryMaxBytes = options.aiSummaryMaxBytes;
   }
 
   /**
@@ -140,7 +141,8 @@ export class ContentCard {
    */
   renderExpanded() {
     const readingTime = calculateReadingTime(this.article.wordCount);
-    const summary = this.article.summary || '';
+    const summaryFull = this.article.summary || '';
+    const summary = this.aiSummaryMaxBytes ? truncateBytes(summaryFull, this.aiSummaryMaxBytes) : summaryFull;
     const tags = this.article.tags || [];
     
     return `

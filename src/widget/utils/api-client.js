@@ -16,7 +16,7 @@ export class ContentGrowthAPI {
    * Fetch list of articles
    */
   async fetchArticles(options = {}) {
-    const { page = 1, limit = 12, tags = [] } = options;
+    const { page = 1, limit = 12, tags = [], category } = options;
     console.log('[ContentGrowthAPI] fetchArticles called with options:', options);
     
     const params = new URLSearchParams({
@@ -26,6 +26,10 @@ export class ContentGrowthAPI {
 
     if (tags.length > 0) {
       params.set('tag', tags.join(','));
+    }
+
+    if (category) {
+      params.set('category', category);
     }
 
     const url = `${this.baseUrl}/widget/articles?${params}`;
