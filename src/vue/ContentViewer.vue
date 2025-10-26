@@ -85,7 +85,7 @@ const processImageSyntax = (markdown: string): string => {
   return markdown.replace(
     /!\[([^\]]*)\]\(([^\s)]+)\s+=(\d+)x(\d+)\)/g,
     (match, alt, url, width, height) => {
-      return `![${alt}](${url}){width="${width}" height="${height}"}`;
+      return `![${alt}](${url})`;
     }
   );
 };

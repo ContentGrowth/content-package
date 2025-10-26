@@ -15,6 +15,21 @@ import type {
 import { ContentGrowthError } from '../types/index.js';
 
 /**
+ * Process markdown content to handle custom image syntax
+ * Converts: ![alt](url =WIDTHxHEIGHT) to ![alt](url){width="WIDTH" height="HEIGHT"}
+ * This ensures all consumers get properly formatted image syntax
+ */
+function processImageSyntax(markdown: string): string {
+  if (!markdown) return markdown;
+  return markdown.replace(
+    /!\[([^\]]*)\]\(([^\s)]+)\s+=(\d+)x(\d+)\)/g,
+    (match, alt, url, width, height) => {
+      return `![${alt}](${url})`;
+    }
+  );
+}
+
+/**
  * Content Growth API Client
  * 
  * @example
@@ -114,6 +129,11 @@ export class ContentGrowthClient {
     const url = `${this.config.baseUrl}/widget/articles/${uuid}`;
     const data = await this.fetch<ArticleWithContent>(url);
 
+    // Process image syntax in content
+    if (data.content) {
+      data.content = processImageSyntax(data.content);
+    }
+
     this.setCache(cacheKey, data);
     return data;
   }
@@ -135,6 +155,11 @@ export class ContentGrowthClient {
 
     const url = `${this.config.baseUrl}/widget/articles/slug/${slug}`;
     const data = await this.fetch<ArticleWithContent>(url);
+
+    // Process image syntax in content
+    if (data.content) {
+      data.content = processImageSyntax(data.content);
+    }
 
     this.setCache(cacheKey, data);
     return data;
