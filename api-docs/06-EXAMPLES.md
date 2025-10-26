@@ -12,8 +12,8 @@ Practical examples for common use cases.
 import ContentList from '@contentgrowth/content-widget/astro/ContentList.astro';
 import '@contentgrowth/content-widget/styles.css';
 
-const apiKey = import.meta.env.CG_API_KEY;
-const baseUrl = import.meta.env.CG_API_URL;
+const apiKey = import.meta.env.PUBLIC_CG_API_KEY;
+const baseUrl = import.meta.env.PUBLIC_CG_API_URL;
 ---
 
 <main class="max-w-7xl mx-auto px-4 py-12">
@@ -394,8 +394,8 @@ export default function BlogPage() {
     <main className="container mx-auto px-4 py-12">
       <h1 className="text-4xl font-bold mb-8">Blog</h1>
       <ContentList 
-        apiKey={process.env.CG_API_KEY\!}
-        baseUrl={process.env.CG_API_URL\!}
+        apiKey={process.env.PUBLIC_CG_API_KEY\!}
+        baseUrl={process.env.PUBLIC_CG_API_URL\!}
         category="guide"
         layout="cards"
         pageSize={12}
@@ -411,8 +411,8 @@ import { ContentViewer } from '@contentgrowth/content-widget/react';
 export default function ArticlePage({ params }: { params: { slug: string } }) {
   return (
     <ContentViewer 
-      apiKey={process.env.CG_API_KEY\!}
-      baseUrl={process.env.CG_API_URL\!}
+      apiKey={process.env.PUBLIC_CG_API_KEY\!}
+      baseUrl={process.env.PUBLIC_CG_API_URL\!}
       slug={params.slug}
     />
   );

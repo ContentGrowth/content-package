@@ -439,7 +439,7 @@ const apiKey = 'pk_live_abc123';
 ✅ **Good:**
 ```javascript
 // Server-side only
-const apiKey = process.env.CG_API_KEY;
+const apiKey = process.env.PUBLIC_CG_API_KEY;
 ```
 
 For client-side widgets, use server-side proxies or environment variables that are only available at build time.

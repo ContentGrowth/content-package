@@ -85,8 +85,8 @@ import '@content-growth/content-widget/styles.css';
     <h1 class="text-4xl font-bold mb-8">Our Content</h1>
     
     <ContentList
-      apiKey={import.meta.env.CG_API_KEY || 'pk_test_key'}
-      baseUrl={import.meta.env.CG_API_URL || 'http://localhost:8787'}
+      apiKey={import.meta.env.PUBLIC_CG_API_KEY || 'pk_test_key'}
+      baseUrl={import.meta.env.PUBLIC_CG_API_URL || 'http://localhost:8787'}
       layout="cards"
       displayMode="comfortable"
       theme="light"
@@ -109,8 +109,8 @@ const { uuid } = Astro.params;
 <Layout title="Article">
   <main class="container mx-auto px-4 py-8">
     <ContentViewer
-      apiKey={import.meta.env.CG_API_KEY || 'pk_test_key'}
-      baseUrl={import.meta.env.CG_API_URL || 'http://localhost:8787'}
+      apiKey={import.meta.env.PUBLIC_CG_API_KEY || 'pk_test_key'}
+      baseUrl={import.meta.env.PUBLIC_CG_API_URL || 'http://localhost:8787'}
       uuid={uuid}
       showBackButton={true}
       backUrl="/examples/content-list"
@@ -125,8 +125,8 @@ const { uuid } = Astro.params;
 Create `.env` file in wwwsite root:
 
 ```env
-CG_API_KEY=pk_your_actual_key
-CG_API_URL=http://localhost:8787
+PUBLIC_CG_API_KEY=pk_your_actual_key
+PUBLIC_CG_API_URL=http://localhost:8787
 ```
 
 ### Step 4: Test Locally
@@ -354,12 +354,12 @@ Store API keys in environment variables:
 
 ```env
 # .env
-CG_API_KEY=pk_your_key_here
+PUBLIC_CG_API_KEY=pk_your_key_here
 ```
 
 ```astro
 ---
-<ContentList apiKey={import.meta.env.CG_API_KEY} />
+<ContentList apiKey={import.meta.env.PUBLIC_CG_API_KEY} />
 ---
 ```
 

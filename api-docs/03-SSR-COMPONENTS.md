@@ -38,8 +38,8 @@ Display a paginated list of articles.
 import ContentList from '@contentgrowth/content-widget/astro/ContentList.astro';
 import '@contentgrowth/content-widget/styles.css';
 
-const apiKey = import.meta.env.CG_API_KEY;
-const baseUrl = import.meta.env.CG_API_URL;
+const apiKey = import.meta.env.PUBLIC_CG_API_KEY;
+const baseUrl = import.meta.env.PUBLIC_CG_API_URL;
 ---
 
 <ContentList 
@@ -152,8 +152,8 @@ Define how article URLs are structured using placeholders:
 import ContentList from '@contentgrowth/content-widget/astro/ContentList.astro';
 import '@contentgrowth/content-widget/styles.css';
 
-const apiKey = import.meta.env.CG_API_KEY;
-const baseUrl = import.meta.env.CG_API_URL || 'https://api.content-growth.com';
+const apiKey = import.meta.env.PUBLIC_CG_API_KEY;
+const baseUrl = import.meta.env.PUBLIC_CG_API_URL || 'https://api.content-growth.com';
 ---
 
 <main>
@@ -199,8 +199,8 @@ Display a single article with full content.
 import ContentViewer from '@contentgrowth/content-widget/astro/ContentViewer.astro';
 import '@contentgrowth/content-widget/styles.css';
 
-const apiKey = import.meta.env.CG_API_KEY;
-const baseUrl = import.meta.env.CG_API_URL;
+const apiKey = import.meta.env.PUBLIC_CG_API_KEY;
+const baseUrl = import.meta.env.PUBLIC_CG_API_URL;
 const { slug } = Astro.params;
 ---
 
@@ -282,8 +282,8 @@ import ContentViewer from '@contentgrowth/content-widget/astro/ContentViewer.ast
 import Layout from '../layouts/Layout.astro';
 import '@contentgrowth/content-widget/styles.css';
 
-const apiKey = import.meta.env.CG_API_KEY;
-const baseUrl = import.meta.env.CG_API_URL;
+const apiKey = import.meta.env.PUBLIC_CG_API_KEY;
+const baseUrl = import.meta.env.PUBLIC_CG_API_URL;
 const { slug } = Astro.params;
 ---
 
@@ -319,8 +319,8 @@ import '@contentgrowth/content-widget/styles.css';
 export default function BlogPage() {
   return (
     <ContentList 
-      apiKey={process.env.CG_API_KEY}
-      baseUrl={process.env.CG_API_URL}
+      apiKey={process.env.PUBLIC_CG_API_KEY}
+      baseUrl={process.env.PUBLIC_CG_API_URL}
       category="guide"
       layout="cards"
       pageSize={12}
@@ -342,8 +342,8 @@ export default function ArticlePage() {
   
   return (
     <ContentViewer 
-      apiKey={process.env.CG_API_KEY}
-      baseUrl={process.env.CG_API_URL}
+      apiKey={process.env.PUBLIC_CG_API_KEY}
+      baseUrl={process.env.PUBLIC_CG_API_URL}
       slug={slug}
       showAiSummary={true}
     />
@@ -362,8 +362,8 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
   return (
     <main className="max-w-4xl mx-auto px-4 py-12">
       <ContentViewer 
-        apiKey={process.env.CG_API_KEY!}
-        baseUrl={process.env.CG_API_URL!}
+        apiKey={process.env.PUBLIC_CG_API_KEY!}
+        baseUrl={process.env.PUBLIC_CG_API_URL!}
         slug={params.slug}
         showAiSummary={true}
       />
@@ -440,20 +440,20 @@ Create a `.env` file:
 
 ```bash
 # .env
-CG_API_KEY=your-api-key-here
-CG_API_URL=https://api.content-growth.com
+PUBLIC_CG_API_KEY=your-api-key-here
+PUBLIC_CG_API_URL=https://api.content-growth.com
 ```
 
 ### Framework-Specific
 
 **Astro:**
 ```javascript
-const apiKey = import.meta.env.CG_API_KEY;
+const apiKey = import.meta.env.PUBLIC_CG_API_KEY;
 ```
 
 **Next.js:**
 ```javascript
-const apiKey = process.env.CG_API_KEY;
+const apiKey = process.env.PUBLIC_CG_API_KEY;
 ```
 
 **Vite (Vue/React):**
@@ -480,7 +480,7 @@ Never hardcode API keys:
 <ContentList apiKey="pk_live_abc123" />
 
 <!-- ✅ Good -->
-<ContentList apiKey={import.meta.env.CG_API_KEY} />
+<ContentList apiKey={import.meta.env.PUBLIC_CG_API_KEY} />
 ```
 
 ### 2. Implement Error Boundaries

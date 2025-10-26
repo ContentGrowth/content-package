@@ -383,7 +383,7 @@ export default function ArticlesPage() {
   return (
     <main>
       <h1>Articles</h1>
-      <ContentList apiKey={process.env.CG_API_KEY!} />
+      <ContentList apiKey={process.env.PUBLIC_CG_API_KEY!} />
     </main>
   );
 }

@@ -567,12 +567,12 @@ widget.setTheme('dark');
 
 ```javascript
 // .env
-CG_API_KEY=your-key
-CG_API_URL=https://api.content-growth.com
+PUBLIC_CG_API_KEY=your-key
+PUBLIC_CG_API_URL=https://api.content-growth.com
 
 // Component
-const apiKey = import.meta.env.CG_API_KEY;
-const baseUrl = import.meta.env.CG_API_URL;
+const apiKey = import.meta.env.PUBLIC_CG_API_KEY;
+const baseUrl = import.meta.env.PUBLIC_CG_API_URL;
 ```
 
 ### Next.js
