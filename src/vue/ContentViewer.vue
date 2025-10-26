@@ -79,36 +79,10 @@ const article = ref<ArticleWithContent | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
 
-// Process markdown content to handle custom image syntax
-const processImageSyntax = (markdown: string): string => {
-  // Match: ![alt](url =widthxheight)
-  return markdown.replace(
-    /!\[([^\]]*)\]\(([^\s)]+)\s+=(\d+)x(\d+)\)/g,
-    (match, alt, url, width, height) => {
-      return `![${alt}](${url})`;
-    }
-  );
-};
-
-// Configure marked to handle image attributes
-marked.use({
-  renderer: {
-    image(href, title, text) {
-      // Extract width/height from {width="x" height="y"} syntax
-      const attrMatch = text.match(/\{width="(\d+)"\s+height="(\d+)"\}/);
-      if (attrMatch) {
-        const cleanText = text.replace(/\{[^}]+\}/, '').trim();
-        return `<img src="${href}" alt="${cleanText}" width="${attrMatch[1]}" height="${attrMatch[2]}" ${title ? `title="${title}"` : ''} />`;
-      }
-      return `<img src="${href}" alt="${text}" ${title ? `title="${title}"` : ''} />`;
-    }
-  }
-});
-
+// Render markdown to HTML (image syntax already processed by client)
 const contentHtml = computed(() => {
   if (!article.value) return '';
-  const processedContent = processImageSyntax(article.value.content);
-  return marked(processedContent);
+  return marked(article.value.content);
 });
 
 onMounted(async () => {

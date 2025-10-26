@@ -1,6 +1,6 @@
 {
   "name": "@contentgrowth/content-widget",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Embed your Content Growth articles anywhere with beautiful, customizable components",
   "type": "module",
   "main": "./dist/index.js",
@@ -96,6 +96,7 @@
     "@types/react": "^18.0.0",
     "astro": "^5.0.0",
     "react": "^18.0.0",
+    "terser": "^5.36.0",
     "typescript": "^5.0.0",
     "vue": "^3.0.0"
   }

@@ -53,32 +53,6 @@ export const ContentViewer: React.FC<ReactContentViewerProps> = ({
     fetchArticle();
   }, [apiKey, baseUrl, uuid, slug]);
 
-  // Process markdown content to handle custom image syntax
-  const processImageSyntax = (markdown: string): string => {
-    // Match: ![alt](url =widthxheight)
-    return markdown.replace(
-      /!\[([^\]]*)\]\(([^\s)]+)\s+=(\d+)x(\d+)\)/g,
-      (match, alt, url, width, height) => {
-        return `![${alt}](${url})`;
-      }
-    );
-  };
-
-  // Configure marked to handle image attributes
-  marked.use({
-    renderer: {
-      image(href, title, text) {
-        // Extract width/height from {width="x" height="y"} syntax
-        const attrMatch = text.match(/\{width="(\d+)"\s+height="(\d+)"\}/);
-        if (attrMatch) {
-          const cleanText = text.replace(/\{[^}]+\}/, '').trim();
-          return `<img src="${href}" alt="${cleanText}" width="${attrMatch[1]}" height="${attrMatch[2]}" ${title ? `title="${title}"` : ''} />`;
-        }
-        return `<img src="${href}" alt="${text}" ${title ? `title="${title}"` : ''} />`;
-      }
-    }
-  });
-
   if (loading) {
     return (
       <div className={`cg-content-viewer cg-theme-${theme} ${className}`}>
@@ -99,8 +73,8 @@ export const ContentViewer: React.FC<ReactContentViewerProps> = ({
     );
   }
 
-  const processedContent = processImageSyntax(article.content);
-  const contentHtml = marked(processedContent);
+  // Image syntax already processed by client
+  const contentHtml = marked(article.content);
   const publishedDate = formatDate(article.publishedAt);
   const readingTime = calculateReadingTime(article.wordCount);
 

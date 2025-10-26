@@ -5,6 +5,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { minify } from 'terser';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -176,8 +177,25 @@ const bundledJS = `/**
 `;
 
 // Minify the bundles
-console.log('🔧 Minifying bundles...');
-const minifiedJS = minifyJS(bundledJS);
+console.log('🔧 Minifying bundles with Terser...');
+
+// Use Terser for JS minification (properly handles regex)
+const minifyResult = await minify(bundledJS, {
+  compress: {
+    dead_code: true,
+    drop_console: false, // Keep console.log for version
+    drop_debugger: true,
+    pure_funcs: []
+  },
+  mangle: {
+    keep_fnames: false
+  },
+  format: {
+    comments: /^!/  // Keep comments starting with !
+  }
+});
+
+const minifiedJS = minifyResult.code;
 const minifiedCSS = minifyCSS(css);
 
 // Calculate sizes
