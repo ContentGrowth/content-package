@@ -11,7 +11,6 @@ export class ContentGrowthWidget {
   static version = '__VERSION__';
   
   constructor(container, config) {
-    console.log('[ContentGrowthWidget] Constructor called with config:', config);
     
     this.container = typeof container === 'string' 
       ? document.querySelector(container)
@@ -39,13 +38,10 @@ export class ContentGrowthWidget {
       slug: config.slug // Article slug for article-only mode (alternative to articleId)
     };
 
-    console.log('[ContentGrowthWidget] Final config:', this.config);
-
     if (!this.config.apiKey) {
       throw new Error('API key is required');
     }
 
-    console.log('[ContentGrowthWidget] Creating API client with baseUrl:', this.config.baseUrl);
     this.api = new ContentGrowthAPI({
       apiKey: this.config.apiKey,
       baseUrl: this.config.baseUrl
@@ -62,7 +58,6 @@ export class ContentGrowthWidget {
    * Initialize the widget
    */
   init() {
-    console.log('[ContentGrowthWidget] Initializing widget...');
     // Apply theme
     this.container.classList.add('cg-widget');
     this.container.setAttribute('data-theme', this.config.theme);
@@ -70,39 +65,26 @@ export class ContentGrowthWidget {
     // Check if article-only mode
     if (this.config.mode === 'article-only') {
       if (this.config.slug) {
-        console.log('[ContentGrowthWidget] Article-only mode, loading article by slug:', this.config.slug);
         this.showPostInlineBySlug(this.config.slug);
       } else if (this.config.articleId) {
-        console.log('[ContentGrowthWidget] Article-only mode, loading article by ID:', this.config.articleId);
         this.showPostInline(this.config.articleId);
       }
     } else {
       // Create views
       this.showList();
     }
-    console.log('[ContentGrowthWidget] Widget initialized');
   }
 
   /**
    * Show the list view
    */
   showList() {
-    console.log('[ContentGrowthWidget] Showing list view...');
     this.currentView = 'list';
     this.container.innerHTML = '';
 
     const listContainer = document.createElement('div');
     listContainer.className = 'cg-list-view';
     this.container.appendChild(listContainer);
-
-    console.log('[ContentGrowthWidget] Creating ContentList with options:', {
-      layoutMode: this.config.layoutMode,
-      displayMode: this.config.displayMode,
-      pageSize: this.config.pageSize,
-      tags: this.config.tags,
-      category: this.config.category,
-      aiSummaryMaxBytes: this.config.aiSummaryMaxBytes
-    });
 
     this.contentList = new ContentList(listContainer, this.api, {
       layoutMode: this.config.layoutMode,

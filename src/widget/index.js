@@ -11,12 +11,9 @@ import { ContentGrowthWidget } from './widget.js';
 
 // Auto-initialize widgets
 function initWidgets() {
-  console.log('[Widget] Initializing widgets...');
   const containers = document.querySelectorAll('[data-cg-content]');
-  console.log(`[Widget] Found ${containers.length} widget container(s)`);
   
   containers.forEach((container, index) => {
-    console.log(`[Widget ${index}] Processing container:`, container);
     
     const config = {
       apiKey: container.dataset.apiKey || container.dataset.cgApiKey,
@@ -33,13 +30,8 @@ function initWidgets() {
       articleId: container.dataset.articleId || container.dataset.cgArticleId
     };
 
-    console.log(`[Widget ${index}] Configuration:`, config);
-    console.log(`[Widget ${index}] window.WIDGET_BASE_URL:`, window.WIDGET_BASE_URL);
-
     try {
-      console.log(`[Widget ${index}] Creating ContentGrowthWidget instance...`);
       new ContentGrowthWidget(container, config);
-      console.log(`[Widget ${index}] Widget initialized successfully`);
     } catch (error) {
       console.error(`[Widget ${index}] Failed to initialize:`, error);
       container.innerHTML = `

@@ -4,12 +4,10 @@
  */
 export class ContentGrowthAPI {
   constructor(config) {
-    console.log('[ContentGrowthAPI] Constructor called with config:', config);
     this.apiKey = config.apiKey;
     this.baseUrl = config.baseUrl || 'https://api.content-growth.com';
     this.cache = new Map();
     this.cacheTTL = 5 * 60 * 1000; // 5 minutes
-    console.log('[ContentGrowthAPI] Initialized with baseUrl:', this.baseUrl, 'apiKey:', this.apiKey);
   }
 
   /**
@@ -17,7 +15,6 @@ export class ContentGrowthAPI {
    */
   async fetchArticles(options = {}) {
     const { page = 1, limit = 12, tags = [], category } = options;
-    console.log('[ContentGrowthAPI] fetchArticles called with options:', options);
     
     const params = new URLSearchParams({
       page: page.toString(),
@@ -34,19 +31,14 @@ export class ContentGrowthAPI {
 
     const url = `${this.baseUrl}/widget/articles?${params}`;
     const cacheKey = url;
-    console.log('[ContentGrowthAPI] Request URL:', url);
 
     // Check cache
     const cached = this.getFromCache(cacheKey);
     if (cached) {
-      console.log('[ContentGrowthAPI] Returning cached data');
       return cached;
     }
 
     try {
-      console.log('[ContentGrowthAPI] Making fetch request with headers:', {
-        'X-API-Key': this.apiKey
-      });
       
       const response = await fetch(url, {
         headers: {
@@ -54,7 +46,6 @@ export class ContentGrowthAPI {
         }
       });
 
-      console.log('[ContentGrowthAPI] Response status:', response.status, response.statusText);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -63,7 +54,6 @@ export class ContentGrowthAPI {
       }
 
       const data = await response.json();
-      console.log('[ContentGrowthAPI] Response data:', data);
       
       // Cache the result
       this.setCache(cacheKey, data);
@@ -81,20 +71,14 @@ export class ContentGrowthAPI {
   async fetchArticle(uuid) {
     const url = `${this.baseUrl}/widget/articles/${uuid}`;
     const cacheKey = url;
-    console.log('[ContentGrowthAPI] fetchArticle called for uuid:', uuid);
-    console.log('[ContentGrowthAPI] Request URL:', url);
 
     // Check cache
     const cached = this.getFromCache(cacheKey);
     if (cached) {
-      console.log('[ContentGrowthAPI] Returning cached article');
       return cached;
     }
 
     try {
-      console.log('[ContentGrowthAPI] Making fetch request with headers:', {
-        'X-API-Key': this.apiKey
-      });
       
       const response = await fetch(url, {
         headers: {
@@ -102,7 +86,6 @@ export class ContentGrowthAPI {
         }
       });
 
-      console.log('[ContentGrowthAPI] Response status:', response.status, response.statusText);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -111,7 +94,6 @@ export class ContentGrowthAPI {
       }
 
       const data = await response.json();
-      console.log('[ContentGrowthAPI] Response data:', data);
       
       // Cache the result
       this.setCache(cacheKey, data);
@@ -129,20 +111,14 @@ export class ContentGrowthAPI {
   async fetchArticleBySlug(slug) {
     const url = `${this.baseUrl}/widget/articles/slug/${slug}`;
     const cacheKey = url;
-    console.log('[ContentGrowthAPI] fetchArticleBySlug called for slug:', slug);
-    console.log('[ContentGrowthAPI] Request URL:', url);
 
     // Check cache
     const cached = this.getFromCache(cacheKey);
     if (cached) {
-      console.log('[ContentGrowthAPI] Returning cached article');
       return cached;
     }
 
     try {
-      console.log('[ContentGrowthAPI] Making fetch request with headers:', {
-        'X-API-Key': this.apiKey
-      });
       
       const response = await fetch(url, {
         headers: {
@@ -150,7 +126,6 @@ export class ContentGrowthAPI {
         }
       });
 
-      console.log('[ContentGrowthAPI] Response status:', response.status, response.statusText);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -159,7 +134,6 @@ export class ContentGrowthAPI {
       }
 
       const data = await response.json();
-      console.log('[ContentGrowthAPI] Response data:', data);
       
       // Cache the result
       this.setCache(cacheKey, data);

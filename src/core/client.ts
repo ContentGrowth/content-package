@@ -188,9 +188,6 @@ export class ContentGrowthClient {
    * Internal fetch wrapper with error handling
    */
   private async fetch<T>(url: string): Promise<T> {
-    console.log('[ContentGrowthClient] Fetching:', url);
-    console.log('[ContentGrowthClient] API Key:', this.config.apiKey);
-
     try {
       const response = await fetch(url, {
         headers: {
@@ -199,11 +196,8 @@ export class ContentGrowthClient {
         }
       });
 
-      console.log('[ContentGrowthClient] Response status:', response.status, response.statusText);
-
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('[ContentGrowthClient] Error response:', errorText);
         let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
         
         try {
@@ -221,16 +215,13 @@ export class ContentGrowthClient {
       }
 
       const data = await response.json();
-      console.log('[ContentGrowthClient] Response data:', data);
       return data;
     } catch (error) {
       if (error instanceof ContentGrowthError) {
-        console.error('[ContentGrowthClient] ContentGrowthError:', error);
         throw error;
       }
 
       // Network or parsing error
-      console.error('[ContentGrowthClient] Network/Parse error:', error);
       throw new ContentGrowthError(
         `Failed to fetch from Content Growth API: ${(error as Error).message}`,
         undefined,
