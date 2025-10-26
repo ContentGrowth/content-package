@@ -2,6 +2,21 @@
  * Content Growth API Client
  * Handles fetching articles from the widget API (requires API key)
  */
+
+/**
+ * Process markdown content to handle custom image syntax
+ * Converts: ![alt](url =WIDTHxHEIGHT) to ![alt](url)
+ */
+function processImageSyntax(markdown) {
+  if (!markdown) return markdown;
+  return markdown.replace(
+    /!\[([^\]]*)\]\(([^\s)]+)\s+=(\d+)x(\d+)\)/g,
+    (match, alt, url, width, height) => {
+      return `![${alt}](${url})`;
+    }
+  );
+}
+
 export class ContentGrowthAPI {
   constructor(config) {
     this.apiKey = config.apiKey;
@@ -95,6 +110,11 @@ export class ContentGrowthAPI {
 
       const data = await response.json();
       
+      // Process image syntax in content
+      if (data.content) {
+        data.content = processImageSyntax(data.content);
+      }
+      
       // Cache the result
       this.setCache(cacheKey, data);
       
@@ -134,6 +154,11 @@ export class ContentGrowthAPI {
       }
 
       const data = await response.json();
+      
+      // Process image syntax in content
+      if (data.content) {
+        data.content = processImageSyntax(data.content);
+      }
       
       // Cache the result
       this.setCache(cacheKey, data);
