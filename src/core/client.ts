@@ -16,13 +16,14 @@ import { ContentGrowthError } from '../types/index.js';
 
 /**
  * Process markdown content to handle custom image syntax
- * Converts: ![alt](url =WIDTHxHEIGHT) to ![alt](url){width="WIDTH" height="HEIGHT"}
+ * Converts: ![alt](url =WIDTHxHEIGHT) or ![alt](url =WIDTHx) to ![alt](url)
+ * Handles both formats: with height (=900x600) and without height (=900x)
  * This ensures all consumers get properly formatted image syntax
  */
 function processImageSyntax(markdown: string): string {
   if (!markdown) return markdown;
   return markdown.replace(
-    /!\[([^\]]*)\]\(([^\s)]+)\s+=(\d+)x(\d+)\)/g,
+    /!\[([^\]]*)\]\(([^\s)]+)\s*=(\d+)x(\d*)\)/g,
     (match, alt, url, width, height) => {
       return `![${alt}](${url})`;
     }
