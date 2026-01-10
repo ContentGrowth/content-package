@@ -39,7 +39,7 @@ export const ContentList: React.FC<ReactContentListProps> = ({
       setLoading(true);
       try {
         const client = new ContentGrowthClient({ apiKey, baseUrl });
-        
+
         // Process tags
         let processedTags: string[] | undefined;
         const tagsProp = tags as string[] | string | undefined;
@@ -68,7 +68,8 @@ export const ContentList: React.FC<ReactContentListProps> = ({
     };
 
     fetchArticles();
-  }, [apiKey, baseUrl, currentPage, pageSize, tags, category]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiKey, baseUrl, currentPage, pageSize, JSON.stringify(tags), category]);
 
   // Truncate summary text
   const truncateSummary = (text: string | null, maxLength?: number): string => {
@@ -130,13 +131,13 @@ export const ContentList: React.FC<ReactContentListProps> = ({
                           <span className="cg-category-badge">{article.category}</span>
                         </div>
                       )}
-                      
+
                       <h2 className="cg-card-title">{article.title}</h2>
-                      
+
                       {showAiSummary && article.summary && (
                         <p className="cg-card-summary">{truncateSummary(article.summary, summaryMaxLength)}</p>
                       )}
-                      
+
                       <div className="cg-card-meta">
                         <span className="cg-meta-author">{article.authorName}</span>
                         <span className="cg-meta-separator">•</span>
@@ -146,7 +147,7 @@ export const ContentList: React.FC<ReactContentListProps> = ({
                         <span className="cg-meta-separator">•</span>
                         <span className="cg-meta-reading-time">{readingTime}</span>
                       </div>
-                      
+
                       {showTags && article.tags && article.tags.length > 0 && (
                         <div className="cg-card-tags">
                           {article.tags.map((tag) => (
@@ -170,11 +171,11 @@ export const ContentList: React.FC<ReactContentListProps> = ({
               >
                 Previous
               </button>
-              
+
               <span className="cg-pagination-info">
                 Page {currentPage} of {totalPages}
               </span>
-              
+
               <button
                 className="cg-pagination-btn"
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
