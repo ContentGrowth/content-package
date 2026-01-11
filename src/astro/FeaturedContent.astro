@@ -1,0 +1,89 @@
+---
+import { marked } from 'marked';
+import { ContentGrowthClient } from '../core/client';
+import type { FeaturedContentProps } from '../types';
+
+type Props = FeaturedContentProps & { class?: string };
+
+const {
+  apiKey,
+  baseUrl,
+  tags = [],
+  category,
+  excludeTags = [],
+  showAiSummary = true,
+  showCategory = true,
+  showTags = true,
+  class: className = ''
+} = Astro.props;
+
+// Fetch featured article
+const client = new ContentGrowthClient({ apiKey, baseUrl });
+let article = null;
+let error = null;
+
+try {
+  article = await client.getFeaturedArticle({
+    tags,
+    category,
+    excludeTags
+  });
+} catch (e) {
+  // If 404, article remains null.
+  console.error('Failed to fetch featured article:', e);
+  error = e instanceof Error ? e.message : 'Failed to load featured article';
+}
+
+// Render markdown to HTML
+const contentHtml = article ? marked(article.content) : '';
+---
+
+{article ? (
+  <div class={`cg-widget cg-content-viewer ${className}`}>
+    <article class="cg-article">
+      {showCategory && article.category && (
+        <div class="cg-article-category">{article.category}</div>
+      )}
+      
+      <h1 class="cg-article-title">{article.title}</h1>
+      
+      <div class="cg-article-meta">
+        <span class="cg-author">{article.authorName}</span>
+        <span class="cg-date">
+          {new Date(article.publishedAt * 1000).toLocaleDateString()}
+        </span>
+        <span class="cg-read-time">
+          {Math.ceil(article.wordCount / 200)} min read
+        </span>
+      </div>
+
+      {showAiSummary && article.summary && (
+        <div class="cg-ai-summary">
+          <div class="cg-ai-label">AI Summary</div>
+          <p>{article.summary}</p>
+        </div>
+      )}
+
+      {/* Content */}
+      <div 
+        class="cg-article-content"
+        set:html={contentHtml}
+      />
+
+      {/* Tags */}
+      {showTags && article.tags && article.tags.length > 0 && (
+        <div class="cg-article-tags">
+          {article.tags.map((tag: string) => (
+            <span class="cg-tag">#{tag}</span>
+          ))}
+        </div>
+      )}
+    </article>
+  </div>
+) : (
+  error ? (
+     <div class={`cg-widget cg-error ${className}`}>
+      {error}
+    </div>
+  ) : null
+)}

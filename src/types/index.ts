@@ -241,6 +241,11 @@ export interface ContentListProps {
    * Custom CSS class
    */
   class?: string;
+
+  /**
+   * Custom CSS class (React alias)
+   */
+  className?: string;
 }
 
 /**
@@ -312,6 +317,35 @@ export interface ContentViewerProps {
    * Custom CSS class
    */
   class?: string;
+
+  /**
+   * Custom CSS class (React alias)
+   */
+  className?: string;
+}
+
+/**
+ * Options for fetching featured article
+ */
+export interface FeaturedArticleOptions {
+  tags?: string[];
+  category?: string;
+  excludeTags?: string[];
+}
+
+/**
+ * Component props for FeaturedContent
+ */
+export interface FeaturedContentProps extends Omit<ContentViewerProps, 'uuid' | 'slug'> {
+  /**
+   * Filter by tags (find latest article with these tags)
+   */
+  tags?: string[];
+
+  /**
+   * Filter by category (find latest article in this category)
+   */
+  category?: string;
 }
 
 /**

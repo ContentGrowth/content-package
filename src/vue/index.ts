@@ -9,4 +9,4 @@
 export * from './composables.js';
 
 // Re-export types for Vue components
-export type { ContentListProps, ContentViewerProps } from '../types/index.js';
+export type { ContentListProps, ContentViewerProps, FeaturedContentProps } from '../types/index.js';

@@ -10,6 +10,7 @@ import type {
   ArticleWithContent,
   CategoriesResponse,
   TagsResponse,
+  FeaturedArticleOptions,
   CacheEntry
 } from '../types/index.js';
 import { ContentGrowthError } from '../types/index.js';
@@ -171,6 +172,42 @@ export class ContentGrowthClient {
     }
 
     const url = `${this.config.baseUrl}/widget/articles/slug/${slug}?${params.toString()}`;
+    const data = await this.fetch<ArticleWithContent>(url);
+
+    // Process image syntax in content
+    if (data.content) {
+      data.content = processImageSyntax(data.content);
+    }
+
+    this.setCache(cacheKey, data);
+    return data;
+  }
+
+  /**
+   * Get featured article (latest matching criteria)
+   */
+  async getFeaturedArticle(options: FeaturedArticleOptions = {}): Promise<ArticleWithContent> {
+    const { tags = [], category, excludeTags = [] } = options;
+
+    // Build cache key
+    const parts = ['featured'];
+    if (tags.length > 0) parts.push(`tags:${tags.sort().join(',')}`);
+    if (category) parts.push(`cat:${category}`);
+    if (excludeTags.length > 0) parts.push(`exclude:${excludeTags.sort().join(',')}`);
+
+    const cacheKey = parts.join(':');
+    const cached = this.getFromCache<ArticleWithContent>(cacheKey);
+    if (cached) {
+      this.log('Cache hit:', cacheKey);
+      return cached;
+    }
+
+    const params = new URLSearchParams();
+    if (tags.length > 0) params.set('tags', tags.join(','));
+    if (category) params.set('category', category);
+    if (excludeTags.length > 0) params.set('excludeTags', excludeTags.join(','));
+
+    const url = `${this.config.baseUrl}/widget/articles/featured?${params.toString()}`;
     const data = await this.fetch<ArticleWithContent>(url);
 
     // Process image syntax in content

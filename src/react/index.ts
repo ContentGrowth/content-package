@@ -4,6 +4,7 @@
 
 export { ContentList } from './ContentList.js';
 export { ContentViewer } from './ContentViewer.js';
+export { FeaturedContent } from './FeaturedContent.js';
 export * from './hooks.js';
 
 export type { ReactContentListProps } from './ContentList.js';
