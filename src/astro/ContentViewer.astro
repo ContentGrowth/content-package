@@ -19,6 +19,9 @@ const {
   showBackButton = false,
   backUrl = '/articles',
   showAiSummary = true,
+  showCategory = true,
+  showTags = true,
+  excludeTags = [],
   class: className = ''
 } = Astro.props;
 
@@ -30,8 +33,8 @@ if (!uuid && !slug) {
 // Fetch article
 const client = new ContentGrowthClient({ apiKey, baseUrl });
 const article = slug 
-  ? await client.getArticleBySlug(slug)
-  : await client.getArticle(uuid!);
+  ? await client.getArticleBySlug(slug, { excludeTags })
+  : await client.getArticle(uuid!, { excludeTags });
 
 // Render markdown to HTML (image syntax already processed by client)
 const contentHtml = marked(article.content);
@@ -57,7 +60,7 @@ const readingTime = calculateReadingTime(article.wordCount);
   )}
 
   <header class="cg-content-header">
-    {article.category && (
+    {showCategory && article.category && (
       <div class="cg-content-category">
         <span class="cg-category-badge">{article.category}</span>
       </div>
@@ -87,7 +90,7 @@ const readingTime = calculateReadingTime(article.wordCount);
       <span class="cg-info-reading-time">{readingTime}</span>
     </div>
     
-    {article.tags.length > 0 && (
+    {showTags && article.tags.length > 0 && (
       <div class="cg-content-tags">
         {article.tags.map((tag) => (
           <span class="cg-tag">{tag}</span>

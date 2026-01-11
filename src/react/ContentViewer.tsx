@@ -22,6 +22,9 @@ export const ContentViewer: React.FC<ReactContentViewerProps> = ({
   showBackButton = false,
   backUrl = '/articles',
   showAiSummary = true,
+  showCategory = true,
+  showTags = true,
+  excludeTags = [],
   className = ''
 }) => {
   const [article, setArticle] = useState<ArticleWithContent | null>(null);
@@ -40,8 +43,8 @@ export const ContentViewer: React.FC<ReactContentViewerProps> = ({
       try {
         const client = new ContentGrowthClient({ apiKey, baseUrl });
         const fetchedArticle = slug
-          ? await client.getArticleBySlug(slug)
-          : await client.getArticle(uuid!);
+          ? await client.getArticleBySlug(slug, { excludeTags })
+          : await client.getArticle(uuid!, { excludeTags });
         setArticle(fetchedArticle);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load article');
@@ -51,7 +54,7 @@ export const ContentViewer: React.FC<ReactContentViewerProps> = ({
     };
 
     fetchArticle();
-  }, [apiKey, baseUrl, uuid, slug]);
+  }, [apiKey, baseUrl, uuid, slug, JSON.stringify(excludeTags)]);
 
   if (loading) {
     return (
@@ -87,7 +90,7 @@ export const ContentViewer: React.FC<ReactContentViewerProps> = ({
         <div className="cg-content-header-back">
           <a href={backUrl} className="cg-back-btn">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M12 16L6 10L12 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M12 16L6 10L12 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
             Back to articles
           </a>
@@ -95,14 +98,14 @@ export const ContentViewer: React.FC<ReactContentViewerProps> = ({
       )}
 
       <header className="cg-content-header">
-        {article.category && (
+        {showCategory && article.category && (
           <div className="cg-content-category">
             <span className="cg-category-badge">{article.category}</span>
           </div>
         )}
-        
+
         <h1 className="cg-content-title">{article.title}</h1>
-        
+
         {showAiSummary && article.summary && (
           <div className="cg-ai-summary">
             <div className="cg-ai-summary-header">
@@ -114,7 +117,7 @@ export const ContentViewer: React.FC<ReactContentViewerProps> = ({
             <p className="cg-ai-summary-text">{article.summary}</p>
           </div>
         )}
-        
+
         <div className="cg-content-meta">
           <span className="cg-info-author">{article.authorName}</span>
           <span className="cg-info-separator">•</span>
@@ -124,8 +127,8 @@ export const ContentViewer: React.FC<ReactContentViewerProps> = ({
           <span className="cg-info-separator">•</span>
           <span className="cg-info-reading-time">{readingTime}</span>
         </div>
-        
-        {article.tags.length > 0 && (
+
+        {showTags && article.tags.length > 0 && (
           <div className="cg-content-tags">
             {article.tags.map((tag) => (
               <span key={tag} className="cg-tag">{tag}</span>

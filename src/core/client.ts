@@ -115,19 +115,27 @@ export class ContentGrowthClient {
   /**
    * Get a single article by UUID
    */
-  async getArticle(uuid: string): Promise<ArticleWithContent> {
+  async getArticle(uuid: string, options?: { excludeTags?: string[] }): Promise<ArticleWithContent> {
     if (!uuid) {
       throw new ContentGrowthError('Article UUID is required');
     }
 
-    const cacheKey = `article:${uuid}`;
+    // Include excludeTags in cache key if present
+    const excludeTagsStr = options?.excludeTags?.sort().join(',') || '';
+    const cacheKey = `article:${uuid}${excludeTagsStr ? `:exclude:${excludeTagsStr}` : ''}`;
+
     const cached = this.getFromCache<ArticleWithContent>(cacheKey);
     if (cached) {
       this.log('Cache hit:', cacheKey);
       return cached;
     }
 
-    const url = `${this.config.baseUrl}/widget/articles/${uuid}`;
+    const params = new URLSearchParams();
+    if (options?.excludeTags && options.excludeTags.length > 0) {
+      params.set('excludeTags', options.excludeTags.join(','));
+    }
+
+    const url = `${this.config.baseUrl}/widget/articles/${uuid}?${params.toString()}`;
     const data = await this.fetch<ArticleWithContent>(url);
 
     // Process image syntax in content
@@ -142,19 +150,27 @@ export class ContentGrowthClient {
   /**
    * Get a single article by slug
    */
-  async getArticleBySlug(slug: string): Promise<ArticleWithContent> {
+  async getArticleBySlug(slug: string, options?: { excludeTags?: string[] }): Promise<ArticleWithContent> {
     if (!slug) {
       throw new ContentGrowthError('Article slug is required');
     }
 
-    const cacheKey = `article:slug:${slug}`;
+    // Include excludeTags in cache key if present
+    const excludeTagsStr = options?.excludeTags?.sort().join(',') || '';
+    const cacheKey = `article:slug:${slug}${excludeTagsStr ? `:exclude:${excludeTagsStr}` : ''}`;
+
     const cached = this.getFromCache<ArticleWithContent>(cacheKey);
     if (cached) {
       this.log('Cache hit:', cacheKey);
       return cached;
     }
 
-    const url = `${this.config.baseUrl}/widget/articles/slug/${slug}`;
+    const params = new URLSearchParams();
+    if (options?.excludeTags && options.excludeTags.length > 0) {
+      params.set('excludeTags', options.excludeTags.join(','));
+    }
+
+    const url = `${this.config.baseUrl}/widget/articles/slug/${slug}?${params.toString()}`;
     const data = await this.fetch<ArticleWithContent>(url);
 
     // Process image syntax in content
@@ -225,7 +241,7 @@ export class ContentGrowthClient {
       if (!response.ok) {
         const errorText = await response.text();
         let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-        
+
         try {
           const errorJson = JSON.parse(errorText);
           errorMessage = errorJson.error || errorJson.message || errorMessage;

@@ -292,6 +292,23 @@ export interface ContentViewerProps {
   showAiSummary?: boolean;
 
   /**
+   * Tags to exclude from display (e.g. used for filtering on list page)
+   */
+  excludeTags?: string[];
+
+  /**
+   * Show article category
+   * @default true
+   */
+  showCategory?: boolean;
+
+  /**
+   * Show article tags
+   * @default true
+   */
+  showTags?: boolean;
+
+  /**
    * Custom CSS class
    */
   class?: string;

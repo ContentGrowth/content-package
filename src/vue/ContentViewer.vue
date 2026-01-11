@@ -20,7 +20,7 @@
       </div>
 
       <header class="cg-content-header">
-        <div v-if="article.category" class="cg-content-category">
+        <div v-if="showCategory && article.category" class="cg-content-category">
           <span class="cg-category-badge">{{ article.category }}</span>
         </div>
         
@@ -46,7 +46,7 @@
           <span class="cg-info-reading-time">{{ calculateReadingTime(article.wordCount) }}</span>
         </div>
         
-        <div v-if="article.tags.length > 0" class="cg-content-tags">
+        <div v-if="showTags && article.tags.length > 0" class="cg-content-tags">
           <span v-for="tag in article.tags" :key="tag" class="cg-tag">{{ tag }}</span>
         </div>
       </header>
@@ -72,6 +72,9 @@ const props = withDefaults(defineProps<VueContentViewerProps>(), {
   showBackButton: false,
   backUrl: '/articles',
   showAiSummary: true,
+  showCategory: true,
+  showTags: true,
+  excludeTags: () => [],
   className: ''
 });
 
@@ -99,8 +102,8 @@ onMounted(async () => {
       baseUrl: props.baseUrl 
     });
     const fetchedArticle = props.slug
-      ? await client.getArticleBySlug(props.slug)
-      : await client.getArticle(props.uuid!);
+      ? await client.getArticleBySlug(props.slug, { excludeTags: props.excludeTags })
+      : await client.getArticle(props.uuid!, { excludeTags: props.excludeTags });
     article.value = fetchedArticle;
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Failed to load article';

@@ -158,7 +158,14 @@ onMounted(() => {
 });
 
 watch(
-  () => [props.apiKey, props.baseUrl, currentPage.value, props.pageSize, props.tags, props.category],
+  [
+    () => props.apiKey,
+    () => props.baseUrl,
+    () => currentPage.value,
+    () => props.pageSize,
+    () => JSON.stringify(props.tags),
+    () => props.category
+  ],
   () => {
     fetchArticles();
   }
