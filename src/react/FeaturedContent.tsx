@@ -62,47 +62,56 @@ export const FeaturedContent: React.FC<FeaturedContentProps> = ({
         );
     }
 
+    const contentHtml = marked(article.content);
+    const publishedDate = new Date(article.publishedAt * 1000).toLocaleDateString();
+    const readingTime = `${Math.ceil(article.wordCount / 200)} min read`;
+
     return (
-        <div className={`cg-widget cg-content-viewer ${className}`}>
-            <article className="cg-article">
+        <article
+            className={`cg-content-viewer ${className}`}
+            data-cg-widget="post"
+        >
+            <header className="cg-content-header">
                 {showCategory && article.category && (
-                    <div className="cg-article-category">{article.category}</div>
+                    <div className="cg-content-category">
+                        <span className="cg-category-badge">{article.category}</span>
+                    </div>
                 )}
 
-                <h1 className="cg-article-title">{article.title}</h1>
-
-                <div className="cg-article-meta">
-                    <span className="cg-author">{article.authorName}</span>
-                    <span className="cg-date">
-                        {new Date(article.publishedAt * 1000).toLocaleDateString()}
-                    </span>
-                    <span className="cg-read-time">
-                        {Math.ceil(article.wordCount / 200)} min read
-                    </span>
-                </div>
+                <h1 className="cg-content-title">{article.title}</h1>
 
                 {showAiSummary && article.summary && (
                     <div className="cg-ai-summary">
-                        <div className="cg-ai-label">AI Summary</div>
-                        <p>{article.summary}</p>
+                        <div className="cg-ai-summary-header">
+                            <svg className="cg-ai-summary-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <span className="cg-ai-summary-label">AI Generated Summary</span>
+                        </div>
+                        <p className="cg-ai-summary-text">{article.summary}</p>
                     </div>
                 )}
 
-                {/* Content */}
-                <div
-                    className="cg-article-content"
-                    dangerouslySetInnerHTML={{ __html: marked(article.content) }}
-                />
+                <div className="cg-content-meta">
+                    <span className="cg-info-author">{article.authorName}</span>
+                    <span className="cg-info-separator">•</span>
+                    <time className="cg-info-date" dateTime={new Date(article.publishedAt * 1000).toISOString()}>
+                        {publishedDate}
+                    </time>
+                    <span className="cg-info-separator">•</span>
+                    <span className="cg-info-reading-time">{readingTime}</span>
+                </div>
 
-                {/* Tags */}
                 {showTags && article.tags && article.tags.length > 0 && (
-                    <div className="cg-article-tags">
+                    <div className="cg-content-tags">
                         {article.tags.map(tag => (
-                            <span key={tag} className="cg-tag">#{tag}</span>
+                            <span key={tag} className="cg-tag">{tag}</span>
                         ))}
                     </div>
                 )}
-            </article>
-        </div>
+            </header>
+
+            <div className="cg-content-body" dangerouslySetInnerHTML={{ __html: contentHtml }} />
+        </article>
     );
 };

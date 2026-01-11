@@ -55,47 +55,53 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="loading" class="cg-widget cg-loading" :class="className">
-    <div class="cg-spinner"></div>
+  <div v-if="loading" class="cg-content-viewer" :class="className">
+    <div class="cg-empty-state">
+      <p>Loading...</p>
+    </div>
   </div>
 
-  <div v-else-if="error || !article" class="cg-widget cg-error" :class="className">
-    {{ error || 'No featured content found' }}
+  <div v-else-if="error || !article" class="cg-content-viewer" :class="className">
+    <div class="cg-empty-state">
+      <p>{{ error || 'No featured content found' }}</p>
+    </div>
   </div>
 
-  <div v-else class="cg-widget cg-content-viewer" :class="className">
-    <article class="cg-article">
-      <div v-if="showCategory && article?.category" class="cg-article-category">
-        {{ article.category }}
-      </div>
-      
-      <h1 class="cg-article-title">{{ article?.title }}</h1>
-      
-      <div class="cg-article-meta">
-        <span class="cg-author">{{ article?.authorName }}</span>
-        <span v-if="article?.publishedAt" class="cg-date">
-          {{ new Date(article.publishedAt * 1000).toLocaleDateString() }}
-        </span>
-        <span v-if="article?.wordCount" class="cg-read-time">
-          {{ Math.ceil(article.wordCount / 200) }} min read
-        </span>
-      </div>
+  <div v-else class="cg-content-viewer" :class="className" data-cg-widget="post">
+    <article>
+      <header class="cg-content-header">
+        <div v-if="showCategory && article.category" class="cg-content-category">
+          <span class="cg-category-badge">{{ article.category }}</span>
+        </div>
+        
+        <h1 class="cg-content-title">{{ article.title }}</h1>
+        
+        <div v-if="showAiSummary && article.summary" class="cg-ai-summary">
+          <div class="cg-ai-summary-header">
+            <svg class="cg-ai-summary-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span class="cg-ai-summary-label">AI Generated Summary</span>
+          </div>
+          <p class="cg-ai-summary-text">{{ article.summary }}</p>
+        </div>
+        
+        <div class="cg-content-meta">
+          <span class="cg-info-author">{{ article.authorName }}</span>
+          <span class="cg-info-separator">•</span>
+          <time class="cg-info-date" :datetime="new Date(article.publishedAt * 1000).toISOString()">
+            {{ new Date(article.publishedAt * 1000).toLocaleDateString() }}
+          </time>
+          <span class="cg-info-separator">•</span>
+          <span class="cg-info-reading-time">{{ Math.ceil(article.wordCount / 200) }} min read</span>
+        </div>
+        
+        <div v-if="showTags && article.tags && article.tags.length > 0" class="cg-content-tags">
+          <span v-for="tag in article.tags" :key="tag" class="cg-tag">{{ tag }}</span>
+        </div>
+      </header>
 
-      <div v-if="showAiSummary && article?.summary" class="cg-ai-summary">
-        <div class="cg-ai-label">AI Summary</div>
-        <p>{{ article.summary }}</p>
-      </div>
-
-      <!-- Content -->
-      <div 
-        class="cg-article-content"
-        v-html="contentHtml"
-      ></div>
-
-      <!-- Tags -->
-      <div v-if="showTags && article?.tags && article.tags.length > 0" class="cg-article-tags">
-        <span v-for="tag in article.tags" :key="tag" class="cg-tag">#{{ tag }}</span>
-      </div>
+      <div class="cg-content-body" v-html="contentHtml"></div>
     </article>
   </div>
 </template>

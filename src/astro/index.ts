@@ -7,4 +7,4 @@
  */
 
 // Re-export types for Astro components
-export type { ContentListProps, ContentViewerProps } from '../types/index.js';
+export type { ContentListProps, ContentViewerProps, FeaturedContentProps } from '../types/index.js';
