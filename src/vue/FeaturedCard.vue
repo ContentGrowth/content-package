@@ -14,6 +14,7 @@ const props = withDefaults(defineProps<{
   showReadingTime?: boolean;
   linkPattern?: string;
   linkTarget?: string;
+  ctaText?: string;
   className?: string;
 }>(), {
   tags: () => [],
@@ -75,6 +76,11 @@ const layoutClass = computed(() => {
   const layout = (article.value as any).featuredSummaryLayout || 'standard';
   return layout !== 'standard' ? `cg-layout-${layout}` : '';
 });
+
+// Compute CTA text from prop or article data
+const ctaText = computed(() => {
+  return props.ctaText || (article.value as any)?.featuredCtaText || 'Read full story';
+});
 </script>
 
 <template>
@@ -122,7 +128,7 @@ const layoutClass = computed(() => {
 
       <!-- Read more indicator -->
       <div class="cg-featured-card-cta">
-        <span>Read article</span>
+        <span>{{ ctaText }}</span>
         <svg class="cg-featured-card-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>

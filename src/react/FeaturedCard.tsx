@@ -74,7 +74,7 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
     showCategory = true,
     showReadingTime = false,
     showAuthor = false,
-    ctaText = 'Read full story',
+    ctaText: propCtaText,
     linkPattern = '/articles/{slug}',
     linkTarget,
     layout: propLayout,
@@ -145,6 +145,9 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
     const layout = propLayout || (article as any).featuredSummaryLayout || 'standard';
     const readingTime = Math.ceil(article.wordCount / 200);
     const borderClass = borderStyle !== 'none' ? `cg-border-${borderStyle}` : '';
+
+    // Use ctaText from prop, or from article data, or fallback to default
+    const ctaText = propCtaText || (article as any).featuredCtaText || 'Read full story';
 
     const customStyles: Record<string, string> = {};
     if (borderColor !== '#e5e7eb') customStyles['--cg-card-border-color'] = borderColor;

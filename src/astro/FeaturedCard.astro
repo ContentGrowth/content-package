@@ -70,7 +70,7 @@ const {
   showCategory = true,
   showReadingTime = false,
   showAuthor = false,
-  ctaText = 'Read full story',
+  ctaText: propCtaText,
   linkPattern = '/articles/{slug}',
   layout: propLayout,
   borderStyle = 'none',
@@ -116,6 +116,9 @@ const getSummaryHtml = (article: any) => {
 const layout = propLayout || article?.featuredSummaryLayout || 'standard';
 const layoutClass = layout !== 'standard' ? `cg-layout-${layout}` : '';
 const borderClass = borderStyle !== 'none' ? `cg-border-${borderStyle}` : '';
+
+// Use ctaText from prop, or from article data, or fallback to default
+const ctaText = propCtaText || article?.featuredCtaText || 'Read full story';
 
 // Custom CSS properties for styling
 const customStyles = [
