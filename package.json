@@ -1,6 +1,6 @@
 {
   "name": "@contentgrowth/content-widget",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Embed your Content Growth articles anywhere with beautiful, customizable components",
   "type": "module",
   "main": "./dist/index.js",
@@ -34,6 +34,7 @@
     "./astro/ContentList.astro": "./dist/astro/ContentList.astro",
     "./astro/ContentViewer.astro": "./dist/astro/ContentViewer.astro",
     "./astro/FeaturedContent.astro": "./dist/astro/FeaturedContent.astro",
+    "./astro/FeaturedCard.astro": "./dist/astro/FeaturedCard.astro",
     "./vue/ContentList.vue": "./dist/vue/ContentList.vue",
     "./vue/ContentViewer.vue": "./dist/vue/ContentViewer.vue",
     "./vue/FeaturedContent.vue": "./dist/vue/FeaturedContent.vue",

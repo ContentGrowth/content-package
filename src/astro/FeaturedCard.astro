@@ -1,0 +1,188 @@
+---
+import { marked } from 'marked';
+import { ContentGrowthClient } from '../core/client';
+import type { FeaturedContentProps } from '../types';
+
+interface FeaturedCardProps extends Omit<FeaturedContentProps, 'showBackButton' | 'backUrl'> {
+  /**
+   * URL pattern for the article link
+   * Supports placeholders: {uuid}, {slug}, {category}
+   * @default '/articles/{slug}'
+   */
+  linkPattern?: string;
+  
+  /**
+   * Show reading time
+   * @default false
+   */
+  showReadingTime?: boolean;
+
+  /**
+   * Show author
+   * @default false
+   */
+  showAuthor?: boolean;
+
+  /**
+   * Text for the Call to Action link
+   * @default "Read full story"
+   */
+  ctaText?: string;
+
+  /**
+   * Layout override (defaults to article settings)
+   */
+  layout?: 'vertical' | 'horizontal';
+
+  /**
+   * Border style
+   * @default 'none'
+   */
+  borderStyle?: 'none' | 'line' | 'dashed';
+
+  /**
+   * Border color (CSS color value)
+   * @default '#e5e7eb'
+   */
+  borderColor?: string;
+
+  /**
+   * Card background color (CSS color value, 'none' for transparent)
+   * @default 'none'
+   */
+  cardBackground?: string;
+
+  /**
+   * Background color for list/quote section (the items area)
+   * @default '#f3f4f6'
+   */
+  itemsBackground?: string;
+}
+
+type Props = FeaturedCardProps & { class?: string };
+
+const {
+  apiKey,
+  baseUrl,
+  tags = [],
+  category,
+  excludeTags = [],
+  showCategory = true,
+  showReadingTime = false,
+  showAuthor = false,
+  ctaText = 'Read full story',
+  linkPattern = '/articles/{slug}',
+  layout: propLayout,
+  borderStyle = 'none',
+  borderColor = '#e5e7eb',
+  cardBackground = 'none',
+  itemsBackground = '#f3f4f6',
+  class: className = ''
+} = Astro.props;
+
+// Fetch featured article
+const client = new ContentGrowthClient({ apiKey, baseUrl });
+let article = null;
+let error = null;
+
+try {
+  article = await client.getFeaturedArticle({
+    tags,
+    category,
+    excludeTags
+  });
+} catch (e) {
+  // If 404, article remains null
+  console.error('Failed to fetch featured article:', e);
+  error = e instanceof Error ? e.message : 'Failed to load featured article';
+}
+
+// Generate article URL
+const getArticleUrl = (article: any) => {
+  if (!article) return '#';
+  return linkPattern
+    .replace('{uuid}', article.uuid || '')
+    .replace('{slug}', article.slug || article.uuid || '')
+    .replace('{category}', article.category || 'uncategorized');
+};
+
+// Render featured summary (or fallback to regular summary) as HTML
+const getSummaryHtml = (article: any) => {
+  const summaryText = article.featuredSummary || article.summary;
+  if (!summaryText) return '';
+  return marked.parse(summaryText, { async: false }) as string;
+};
+
+const layout = propLayout || article?.featuredSummaryLayout || 'standard';
+const layoutClass = layout !== 'standard' ? `cg-layout-${layout}` : '';
+const borderClass = borderStyle !== 'none' ? `cg-border-${borderStyle}` : '';
+
+// Custom CSS properties for styling
+const customStyles = [
+  borderColor !== '#e5e7eb' ? `--cg-card-border-color: ${borderColor}` : '',
+  cardBackground !== 'none' ? `--cg-card-bg: ${cardBackground}` : '',
+  itemsBackground !== '#f3f4f6' ? `--cg-items-bg: ${itemsBackground}` : '',
+].filter(Boolean).join('; ');
+---
+
+{article ? (
+  <a 
+    href={getArticleUrl(article)} 
+    class={`cg-widget cg-featured-card ${className} ${layoutClass} ${borderClass}`}
+    style={customStyles || undefined}
+    data-cg-widget="featured-card"
+  >
+    <article class="cg-featured-card-inner">
+      {/* Header with category badge */}
+      {showCategory && article.category && (
+        <div class="cg-featured-card-category">
+          <span class="cg-category-badge">{article.category}</span>
+        </div>
+      )}
+      
+      {/* Title */}
+      <h3 class="cg-featured-card-title">{article.title}</h3>
+      
+      {/* Featured Summary */}
+      {(article.featuredSummary || article.summary) && (
+        <div 
+          class="cg-featured-card-summary"
+          set:html={getSummaryHtml(article)}
+        />
+      )}
+      
+      {/* Footer with meta info */}
+      {(showAuthor || showReadingTime) && (
+        <div class="cg-featured-card-footer">
+          {showAuthor && <span class="cg-featured-card-author">{article.authorName}</span>}
+          
+          {showAuthor && showReadingTime && (
+            <span class="cg-featured-card-separator">•</span>
+          )}
+          
+          {showReadingTime && (
+            <span class="cg-featured-card-reading-time">
+              {Math.ceil(article.wordCount / 200)} min read
+            </span>
+          )}
+        </div>
+      )}
+      
+      {/* Read more indicator */}
+      <div class="cg-featured-card-cta">
+        <span>{ctaText}</span>
+        <svg class="cg-featured-card-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+    </article>
+  </a>
+) : (
+  error ? (
+    <div class={`cg-widget cg-error ${className}`}>
+      {error}
+    </div>
+  ) : null
+)}
+
+

@@ -268,6 +268,37 @@ const widget = new ContentGrowthWidget(container, {
 />
 ```
 
+**FeaturedCard:**
+
+A compact card displaying the Featured Summary with customizable styling. Perfect for landing pages.
+
+```astro
+<FeaturedCard
+  apiKey="pk_your_key_here"
+  category="announce"
+  linkPattern="/articles/{slug}"
+  layout="horizontal"
+  borderStyle="dashed"
+  itemsBackground="#f3f4f6"
+  ctaText="Read full story"
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `apiKey` | string | - | Your API key |
+| `category` | string | - | Filter by category |
+| `tags` | string[] | [] | Filter by tags |
+| `layout` | 'vertical' \| 'horizontal' | auto | Card layout (auto uses article setting) |
+| `borderStyle` | 'none' \| 'line' \| 'dashed' | 'none' | Card border style |
+| `borderColor` | string | '#e5e7eb' | Border color (CSS value) |
+| `cardBackground` | string | 'none' | Card background ('none' = transparent) |
+| `itemsBackground` | string | '#f3f4f6' | Background for list/quote section |
+| `ctaText` | string | 'Read full story' | Call-to-action text |
+| `showAuthor` | boolean | false | Show author name |
+| `showReadingTime` | boolean | false | Show reading time |
+| `linkPattern` | string | '/articles/{slug}' | URL pattern for link |
+
 ## API Client
 
 ### ContentGrowthClient

@@ -13,6 +13,7 @@ export interface Article {
   authorName: string;
   publishedAt: number;
   summary: string | null;
+  featuredSummary: string | null;
   tags: string[];
   wordCount: number;
 }
