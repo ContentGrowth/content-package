@@ -27,7 +27,8 @@ const {
   summaryMaxLength,
   linkTarget,
   class: className = '',
-  featuredCardLayout
+  featuredCardLayout,
+  showCategory = true
 } = Astro.props;
 
 // Get current page from URL
@@ -101,7 +102,7 @@ const isFeaturedCardsMode = displayAs === 'featured-cards';
                 article={article}
                 linkPattern={linkPattern}
                 linkTarget={articleTarget}
-                showCategory={true}
+                showCategory={showCategory}
                 layout={featuredCardLayout}
               />
             );
@@ -116,7 +117,7 @@ const isFeaturedCardsMode = displayAs === 'featured-cards';
               showSummary={showAiSummary}
               summaryMaxLength={summaryMaxLength}
               showTags={showTags}
-              showCategory={true}
+              showCategory={showCategory}
             />
           );
         })}

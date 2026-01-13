@@ -1,6 +1,6 @@
 {
   "name": "@contentgrowth/content-widget",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Embed your Content Growth articles anywhere with beautiful, customizable components",
   "type": "module",
   "main": "./dist/index.js",

@@ -238,6 +238,12 @@ export interface ContentListProps {
   showAiSummary?: boolean;
 
   /**
+   * Show article category
+   * @default true
+   */
+  showCategory?: boolean;
+
+  /**
    * Maximum length of summary text in cards/rows (in characters)
    * If not set, shows full summary
    * @default undefined (no limit)
