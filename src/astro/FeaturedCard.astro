@@ -1,5 +1,4 @@
 ---
-import { marked } from 'marked';
 import { ContentGrowthClient } from '../core/client';
 import type { FeaturedContentProps, Article, ArticleWithContent } from '../types';
 
@@ -78,6 +77,12 @@ interface FeaturedCardProps extends Omit<FeaturedContentProps, 'showBackButton' 
    * @default undefined (same tab)
    */
   linkTarget?: string;
+
+  /**
+   * Custom padding for the card content
+   * @example "20px" or "0"
+   */
+  padding?: string;
 }
 
 type Props = FeaturedCardProps & { class?: string };
@@ -102,6 +107,7 @@ const {
   borderColor = '#e5e7eb',
   cardBackground = 'none',
   itemsBackground = '#f3f4f6',
+  padding,
   class: className = ''
 } = Astro.props;
 
@@ -146,12 +152,38 @@ const getArticleUrl = (article: any) => {
     .replace('{category}', article.category || 'uncategorized');
 };
 
-// Render featured summary (or fallback to regular summary) as HTML
-const getSummaryHtml = (article: any) => {
+// Parse featured summary - supports both JSON (new) and plain text (legacy)
+interface SummaryData {
+  type: 'classic' | 'list' | 'steps' | 'quote' | 'legacy';
+  text?: string;
+  intro?: string;
+  items?: Array<{ title: string; description: string }>;
+  quote?: string;
+  highlight?: string;
+}
+
+const parseSummary = (article: any): SummaryData | null => {
   const summaryText = article.featuredSummary || article.summary;
-  if (!summaryText) return '';
-  return marked.parse(summaryText, { async: false }) as string;
+  if (!summaryText) return null;
+  
+  // Try to parse as JSON
+  try {
+    const parsed = JSON.parse(summaryText);
+    if (parsed.type) {
+      return parsed as SummaryData;
+    }
+  } catch (e) {
+    // Not JSON, treat as legacy markdown/plain text
+  }
+  
+  // Legacy fallback - render as plain text
+  return {
+    type: 'legacy',
+    text: summaryText
+  };
 };
+
+const summaryData = article ? parseSummary(article) : null;
 
 const layout = propLayout || (article as any)?.featuredSummaryLayout || 'vertical';
 const layoutClass = layout !== 'vertical' ? `cg-layout-${layout}` : '';
@@ -165,6 +197,7 @@ const customStyles = [
   borderColor !== '#e5e7eb' ? `--cg-card-border-color: ${borderColor}` : '',
   cardBackground !== 'none' ? `--cg-card-bg: ${cardBackground}` : '',
   itemsBackground !== '#f3f4f6' ? `--cg-items-bg: ${itemsBackground}` : '',
+  padding ? `--cg-card-padding: ${padding}` : '',
 ].filter(Boolean).join('; ');
 ---
 
@@ -178,42 +211,83 @@ const customStyles = [
     rel={linkTarget === '_blank' ? 'noopener noreferrer' : undefined}
   >
     <article class="cg-featured-card-inner">
-      {/* Header with category badge */}
-      {showCategory && article.category && (
-        <div class="cg-featured-card-category">
-          <span class="cg-category-badge">{article.category}</span>
-        </div>
-      )}
-      
-      {/* Title */}
-      <h3 class="cg-featured-card-title">{article.title}</h3>
-      
-      {/* Featured Summary */}
-      {(article.featuredSummary || article.summary) && (
-        <div 
-          class="cg-featured-card-summary"
-          set:html={getSummaryHtml(article)}
-        />
-      )}
-      
-      {/* Footer with meta info */}
-      {(showAuthor || showReadingTime) && (
-        <div class="cg-featured-card-footer">
-          {showAuthor && <span class="cg-featured-card-author">{article.authorName}</span>}
-          
-          {showAuthor && showReadingTime && (
-            <span class="cg-featured-card-separator">•</span>
+      <div class="cg-card-primary">
+        {/* Header with category badge */}
+        {showCategory && article.category && (
+          <div class="cg-featured-card-category">
+            <span class="cg-category-badge">{article.category}</span>
+          </div>
+        )}
+        
+        {/* Title */}
+        <h3 class="cg-featured-card-title">{article.title}</h3>
+        
+        {/* Featured Summary - Intro / Text Part */}
+        {summaryData && (
+          <div class="cg-featured-card-summary">
+            {/* Intro for structured types */}
+            {(summaryData.type === 'list' || summaryData.type === 'steps' || summaryData.type === 'quote') && summaryData.intro && (
+              <p>{summaryData.intro}</p>
+            )}
+
+            {/* Classic type - just text */}
+            {summaryData.type === 'classic' && (
+              <p>{summaryData.text}</p>
+            )}
+            
+            {/* Legacy markdown - render as plain text */}
+            {summaryData.type === 'legacy' && (
+              <p>{summaryData.text}</p>
+            )}
+          </div>
+        )}
+        
+        {/* Footer with meta info */}
+        {(showAuthor || showReadingTime) && (
+          <div class="cg-featured-card-footer">
+            {showAuthor && <span class="cg-featured-card-author">{article.authorName}</span>}
+            
+            {showAuthor && showReadingTime && (
+              <span class="cg-featured-card-separator">•</span>
+            )}
+            
+            {showReadingTime && (
+              <span class="cg-featured-card-reading-time">
+                {Math.ceil(article.wordCount / 200)} min read
+              </span>
+            )}
+          </div>
+        )}
+        
+        {/* Read more indicator */}
+      </div>
+
+      {/* Right Panel - Structured Visual Items (List/Quote) */}
+      {summaryData && (summaryData.type === 'list' || summaryData.type === 'steps' || summaryData.type === 'quote') && (
+        <div class="cg-card-secondary">
+          {(summaryData.type === 'list' || summaryData.type === 'steps') && (
+            <ul class="cg-summary-items">
+              {summaryData.items?.map((item, index) => (
+                <li>
+                  <span class="cg-item-number">{index + 1}</span>
+                  <div class="cg-item-content">
+                    <strong class="cg-item-title">{item.title}</strong>
+                    <span class="cg-item-description">{item.description}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
           )}
           
-          {showReadingTime && (
-            <span class="cg-featured-card-reading-time">
-              {Math.ceil(article.wordCount / 200)} min read
-            </span>
+          {summaryData.type === 'quote' && (
+            <blockquote>
+              {summaryData.quote}
+            </blockquote>
           )}
         </div>
       )}
-      
-      {/* Read more indicator */}
+
+      {/* Read more indicator - Now at bottom */}
       <div class="cg-featured-card-cta">
         <span>{ctaText}</span>
         <svg class="cg-featured-card-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">

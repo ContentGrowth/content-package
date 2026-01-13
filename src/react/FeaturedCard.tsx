@@ -1,7 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { marked } from 'marked';
 import { ContentGrowthClient } from '../core/client';
 import type { FeaturedContentProps, ArticleWithContent, Article } from '../types';
+
+// Summary data interface for structured JSON format
+interface SummaryData {
+    type: 'classic' | 'list' | 'steps' | 'quote' | 'legacy';
+    text?: string;
+    intro?: string;
+    items?: Array<{ title: string; description: string }>;
+    quote?: string;
+    highlight?: string;
+}
+
+// Parse featured summary - supports both JSON (new) and plain text (legacy)
+const parseSummary = (article: Article | ArticleWithContent): SummaryData | null => {
+    const summaryText = (article as any).featuredSummary || article.summary;
+    if (!summaryText) return null;
+
+    // Try to parse as JSON
+    try {
+        const parsed = JSON.parse(summaryText);
+        if (parsed.type) {
+            return parsed as SummaryData;
+        }
+    } catch (e) {
+        // Not JSON, treat as legacy markdown/plain text
+    }
+
+    // Legacy fallback - render as plain text
+    return {
+        type: 'legacy',
+        text: summaryText
+    };
+};
 
 interface FeaturedCardProps extends Partial<Omit<FeaturedContentProps, 'showBackButton' | 'backUrl' | 'showAiSummary' | 'showTags'>> {
     /**
@@ -77,7 +108,17 @@ interface FeaturedCardProps extends Partial<Omit<FeaturedContentProps, 'showBack
      * Background color for list/quote section (the items area)
      * @default '#f3f4f6'
      */
+    /**
+     * Background color for list/quote section (the items area)
+     * @default '#f3f4f6'
+     */
     itemsBackground?: string;
+
+    /**
+     * Custom padding for the card content
+     * @example "20px" or "0"
+     */
+    padding?: string;
 }
 
 export const FeaturedCard: React.FC<FeaturedCardProps> = ({
@@ -100,6 +141,7 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
     borderColor = '#e5e7eb',
     cardBackground = 'none',
     itemsBackground = '#f3f4f6',
+    padding,
     className = ''
 }) => {
     const [article, setArticle] = useState<Article | ArticleWithContent | null>(providedArticle || null);
@@ -160,12 +202,7 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
             .replace('{category}', article.category || 'uncategorized');
     };
 
-    // Render featured summary (or fallback to regular summary) as HTML
-    const getSummaryHtml = (article: Article | ArticleWithContent) => {
-        const summaryText = (article as any).featuredSummary || article.summary;
-        if (!summaryText) return '';
-        return marked.parse(summaryText, { async: false }) as string;
-    };
+
 
     if (loading) {
         return (
@@ -183,7 +220,6 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
         );
     }
 
-    const summaryHtml = getSummaryHtml(article);
     const layout = propLayout || (article as any).featuredSummaryLayout || 'vertical';
     const readingTime = Math.ceil(article.wordCount / 200);
     const borderClass = borderStyle !== 'none' ? `cg-border-${borderStyle}` : '';
@@ -196,6 +232,7 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
     if (borderColor !== '#e5e7eb') customStyles['--cg-card-border-color'] = borderColor;
     if (cardBackground !== 'none') customStyles['--cg-card-bg'] = cardBackground;
     if (itemsBackground !== '#f3f4f6') customStyles['--cg-items-bg'] = itemsBackground;
+    if (padding) customStyles['--cg-card-padding'] = padding;
 
     return (
         <a
@@ -207,38 +244,92 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
             rel={linkTarget === '_blank' ? 'noopener noreferrer' : undefined}
         >
             <article className="cg-featured-card-inner">
-                {/* Header with category badge */}
-                {showCategory && article.category && (
-                    <div className="cg-featured-card-category">
-                        <span className="cg-category-badge">{article.category}</span>
-                    </div>
-                )}
+                <div className="cg-card-primary">
+                    {/* Header with category badge */}
+                    {showCategory && article.category && (
+                        <div className="cg-featured-card-category">
+                            <span className="cg-category-badge">{article.category}</span>
+                        </div>
+                    )}
 
-                {/* Title */}
-                <h3 className="cg-featured-card-title">{article.title}</h3>
+                    {/* Title */}
+                    <h3 className="cg-featured-card-title">{article.title}</h3>
 
-                {/* Featured Summary */}
-                {summaryHtml && (
-                    <div
-                        className="cg-featured-card-summary"
-                        dangerouslySetInnerHTML={{ __html: summaryHtml }}
-                    />
-                )}
+                    {/* Featured Summary - Structured Rendering */}
+                    {parseSummary(article) && (
+                        <div className="cg-featured-card-summary">
+                            {(() => {
+                                const summaryData = parseSummary(article)!;
 
-                {/* Footer with meta info */}
-                {(showAuthor || showReadingTime) && (
-                    <div className="cg-featured-card-footer">
-                        {showAuthor && <span className="cg-featured-card-author">{article.authorName}</span>}
-                        {showAuthor && showReadingTime && (
-                            <span className="cg-featured-card-separator">•</span>
-                        )}
-                        {showReadingTime && (
-                            <span className="cg-featured-card-reading-time">
-                                {readingTime} min read
-                            </span>
-                        )}
-                    </div>
-                )}
+                                if (summaryData.type === 'classic') {
+                                    return <p>{summaryData.text}</p>;
+                                }
+
+                                if ((summaryData.type === 'list' || summaryData.type === 'steps') && summaryData.intro) {
+                                    return <p>{summaryData.intro}</p>;
+                                }
+
+                                if (summaryData.type === 'quote' && summaryData.quote) {
+                                    return <p>{summaryData.intro}</p>;
+                                }
+
+                                // Legacy
+                                return <p>{summaryData.text}</p>;
+                            })()}
+                        </div>
+                    )}
+
+                    {/* Footer with meta info */}
+                    {(showAuthor || showReadingTime) && (
+                        <div className="cg-featured-card-footer">
+                            {showAuthor && <span className="cg-featured-card-author">{article.authorName}</span>}
+                            {showAuthor && showReadingTime && (
+                                <span className="cg-featured-card-separator">•</span>
+                            )}
+                            {showReadingTime && (
+                                <span className="cg-featured-card-reading-time">
+                                    {readingTime} min read
+                                </span>
+                            )}
+                        </div>
+                    )}
+
+
+                </div>
+
+                {/* Right Panel - Structured Visual Items */}
+                {(() => {
+                    const summaryData = parseSummary(article);
+                    if (!summaryData) return null;
+
+                    if ((summaryData.type === 'list' || summaryData.type === 'steps') && summaryData.items) {
+                        return (
+                            <div className="cg-card-secondary">
+                                <ul className="cg-summary-items">
+                                    {summaryData.items.map((item, index) => (
+                                        <li key={index}>
+                                            <span className="cg-item-number">{index + 1}</span>
+                                            <div className="cg-item-content">
+                                                <strong className="cg-item-title">{item.title}</strong>
+                                                <span className="cg-item-description">{item.description}</span>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        );
+                    }
+
+                    if (summaryData.type === 'quote' && summaryData.quote) {
+                        return (
+                            <div className="cg-card-secondary">
+                                <blockquote>{summaryData.quote}</blockquote>
+                            </div>
+                        );
+                    }
+
+                    return null;
+                })()}
 
                 {/* Read more indicator */}
                 <div className="cg-featured-card-cta">

@@ -1118,51 +1118,34 @@ a.cg-card {
   line-height: 1.7;
 }
 
-/* List & Steps Template - Styled like reference */
-.cg-featured-card-summary ul,
-.cg-featured-card-summary ol {
+/* ===== Structured Summary Items ===== */
+.cg-summary-items {
   margin: 0;
-  padding: 1.25rem 1.5rem;
-  padding-left: 1.5rem;
+  padding: 1rem 1.25rem;
   list-style: none;
   background: var(--cg-items-bg);
   border-radius: 8px;
 }
 
-.cg-featured-card-summary li {
-  margin-bottom: 1.25rem;
-  padding-left: 2.5rem;
+.cg-summary-items li {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
   line-height: 1.5;
-  position: relative;
 }
 
-.cg-featured-card-summary li:last-child {
+.cg-summary-items li:last-child {
   margin-bottom: 0;
 }
 
-/* Unordered list: simple bullets */
-.cg-featured-card-summary ul li::before {
-  content: '';
-  position: absolute;
-  left: 0.5rem;
-  top: 0.5rem;
-  width: 6px;
-  height: 6px;
-  background: var(--cg-primary);
-  border-radius: 50%;
+/* Hide the legacy counter ::before for new structure */
+.cg-summary-items li::before {
+  display: none;
 }
 
-/* Ordered list: numbered circles like reference */
-.cg-featured-card-summary ol {
-  counter-reset: item;
-}
-
-.cg-featured-card-summary ol li::before {
-  content: counter(item);
-  counter-increment: item;
-  position: absolute;
-  left: 0;
-  top: 0;
+/* Numbered badge */
+.cg-item-number {
+  flex-shrink: 0;
   width: 1.5rem;
   height: 1.5rem;
   background: var(--cg-primary);
@@ -1173,76 +1156,199 @@ a.cg-card {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 0.125rem;
 }
 
-/* List item content: bold title + description on next line */
-.cg-featured-card-summary li strong {
+/* Content container */
+.cg-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Title styling */
+.cg-item-title {
   display: block;
   font-size: 0.9375rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--cg-text);
   margin-bottom: 0.125rem;
+}
+
+/* Description styling */
+.cg-item-description {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--cg-text-secondary);
+  line-height: 1.5;
 }
 
 /* Quote Template */
 .cg-featured-card-summary blockquote {
   margin: 0;
-  padding: 1rem 1.25rem;
+  padding: 1.25rem 1.5rem;
   border-left: 3px solid var(--cg-primary);
-  background: var(--cg-bg-secondary);
+  background: var(--cg-items-bg);
   border-radius: 0 8px 8px 0;
   font-style: italic;
-  font-size: 1rem;
+  font-size: 1.0625rem;
+  line-height: 1.7;
   color: var(--cg-text);
 }
 
+/* Legacy markdown list support (for old content) */
+.cg-featured-card-summary ul,
+.cg-featured-card-summary ol {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  list-style: none;
+  background: var(--cg-items-bg);
+  border-radius: 8px;
+  counter-reset: item;
+}
+
+.cg-featured-card-summary ul li,
+.cg-featured-card-summary ol li {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  font-size: 0.875rem;
+  color: var(--cg-text-secondary);
+}
+
+.cg-featured-card-summary ul li:last-child,
+.cg-featured-card-summary ol li:last-child {
+  margin-bottom: 0;
+}
+
+.cg-featured-card-summary ul li::before,
+.cg-featured-card-summary ol li::before {
+  content: counter(item);
+  counter-increment: item;
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: var(--cg-primary);
+  color: white;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.125rem;
+}
+
+.cg-featured-card-summary li strong {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--cg-text);
+}
+
+/* Fix double numbering - Hide the legacy counter ::before for new structure */
+.cg-summary-items li::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Primary/Secondary Panels (Vertical Default) */
+.cg-card-primary {
+  display: flex;
+  flex-direction: column;
+}
+
+.cg-card-secondary {
+  margin-top: 1.5rem;
+}
+
+/* Global Quote Styling (Vertical & Horizontal) */
+.cg-card-secondary blockquote {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  font-weight: 500;
+  font-style: italic;
+  color: #1f2937;
+  border: none;
+  position: relative;
+  padding-left: 3.5rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 120px;
+  /* Ensure some height in vertical mode */
+}
+
+.cg-card-secondary blockquote::before {
+  content: '“';
+  position: absolute;
+  left: -0.5rem;
+  top: -1.5rem;
+  font-size: 6rem;
+  color: var(--cg-primary, #3b82f6);
+  font-family: serif;
+  line-height: 1;
+}
+
 /* ===== Horizontal Layout ===== */
-/* Horizontal layout: intro paragraph on left, list/remaining content on right */
+/* Horizontal layout: intro on left, bullets/quote on right */
+
+/* CTA default spacing (Vertical) */
+.cg-featured-card-cta {
+  margin-top: 1.5rem;
+}
 
 @media (min-width: 768px) {
   .cg-layout-horizontal .cg-featured-card-inner {
-    padding: 2.5rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    /* Two rows: Content and CTA */
+    gap: 1.5rem 3rem;
+    /* Row gap, Col gap */
+    padding: 0;
+    align-items: start;
+    /* Align top by default, center handled by flex children */
+  }
+
+  .cg-layout-horizontal .cg-card-primary {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* CTA moves to row 2, col 1 */
+  .cg-layout-horizontal .cg-featured-card-cta {
+    grid-column: 1;
+    grid-row: 2;
+    margin-top: 0;
+    align-self: end;
+  }
+
+  /* Secondary (Quote/List) spans both rows */
+  .cg-layout-horizontal .cg-card-secondary {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+  }
+
+  /* Specific Quote tweaks for Horizontal if needed */
+  /* Specific Quote tweaks for Horizontal if needed */
+  .cg-layout-horizontal .cg-card-secondary blockquote {
+    height: auto;
+    /* Let it wrap content so icon stays close */
   }
 
   .cg-layout-horizontal .cg-featured-card-title {
     font-size: 1.875rem;
+    margin-bottom: 1rem;
   }
 
-  /* Only the summary content gets the horizontal grid */
+  /* Reset margins for horizontal layout */
   .cg-layout-horizontal .cg-featured-card-summary {
-    display: grid;
-    grid-template-columns: 1fr 1.25fr;
-    gap: 2.5rem;
-    align-items: stretch;
-    /* Changed from start to stretch for balance */
-  }
-
-  /* First paragraph (intro) stays on left - improved styling */
-  .cg-layout-horizontal .cg-featured-card-summary>p:first-child {
-    grid-column: 1;
-    grid-row: 1;
-    margin: 0;
-    font-size: 1.0625rem;
-    line-height: 1.8;
-    color: var(--cg-text-secondary);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    /* Vertically center the text */
-  }
-
-  /* List/quote goes on right */
-  .cg-layout-horizontal .cg-featured-card-summary ul,
-  .cg-layout-horizontal .cg-featured-card-summary ol,
-  .cg-layout-horizontal .cg-featured-card-summary blockquote {
-    grid-column: 2;
-    grid-row: 1;
-    margin: 0;
-  }
-
-  /* If no list, additional paragraphs go on right */
-  .cg-layout-horizontal .cg-featured-card-summary>p:not(:first-child) {
-    grid-column: 2;
-    margin: 0 0 0.75rem;
+    margin-bottom: 1.5rem;
   }
 }

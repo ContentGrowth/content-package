@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
-import { marked } from 'marked';
 import { ContentGrowthClient } from '../core/client';
 import type { ArticleWithContent, Article } from '../types';
+
+// Summary data interface for structured JSON format
+interface SummaryData {
+  type: 'classic' | 'list' | 'steps' | 'quote' | 'legacy';
+  text?: string;
+  intro?: string;
+  items?: Array<{ title: string; description: string }>;
+  quote?: string;
+  highlight?: string;
+}
 
 const props = withDefaults(defineProps<{
   // Pre-loaded article data (bypasses API fetch)
@@ -24,6 +33,11 @@ const props = withDefaults(defineProps<{
   linkTarget?: string;
   ctaText?: string;
   layout?: 'vertical' | 'horizontal';
+  borderStyle?: 'none' | 'line' | 'dashed';
+  borderColor?: string;
+  cardBackground?: string;
+  itemsBackground?: string;
+  padding?: string;
   className?: string;
 }>(), {
   tags: () => [],
@@ -32,6 +46,10 @@ const props = withDefaults(defineProps<{
   showReadingTime: false,
   showAuthor: false,
   linkPattern: '/articles/{slug}',
+  borderStyle: 'none',
+  borderColor: '#e5e7eb',
+  cardBackground: 'none',
+  itemsBackground: '#f3f4f6',
   className: ''
 });
 
@@ -56,12 +74,27 @@ const articleUrl = computed(() => {
     .replace('{category}', loadedArticle.value.category || 'uncategorized');
 });
 
-// Render featured summary (or fallback to regular summary) as HTML
-const summaryHtml = computed(() => {
-  if (!loadedArticle.value) return '';
+// Parse featured summary - supports both JSON (new) and plain text (legacy)
+const summaryData = computed((): SummaryData | null => {
+  if (!loadedArticle.value) return null;
   const summaryText = (loadedArticle.value as any).featuredSummary || loadedArticle.value.summary;
-  if (!summaryText) return '';
-  return marked.parse(summaryText, { async: false }) as string;
+  if (!summaryText) return null;
+  
+  // Try to parse as JSON
+  try {
+    const parsed = JSON.parse(summaryText);
+    if (parsed.type) {
+      return parsed as SummaryData;
+    }
+  } catch (e) {
+    // Not JSON, treat as legacy markdown/plain text
+  }
+  
+  // Legacy fallback - render as plain text
+  return {
+    type: 'legacy',
+    text: summaryText
+  };
 });
 
 const readingTime = computed(() => {
@@ -76,9 +109,23 @@ const layoutClass = computed(() => {
   return layout !== 'vertical' ? `cg-layout-${layout}` : '';
 });
 
+const borderClass = computed(() => {
+  return props.borderStyle !== 'none' ? `cg-border-${props.borderStyle}` : '';
+});
+
 // Compute CTA text from prop or article data
 const ctaText = computed(() => {
   return props.ctaText || (loadedArticle.value as any)?.featuredCtaText || 'Read full story';
+});
+
+// Custom CSS properties
+const customStyles = computed(() => {
+  const styles: Record<string, string> = {};
+  if (props.borderColor !== '#e5e7eb') styles['--cg-card-border-color'] = props.borderColor;
+  if (props.cardBackground !== 'none') styles['--cg-card-bg'] = props.cardBackground;
+  if (props.itemsBackground !== '#f3f4f6') styles['--cg-items-bg'] = props.itemsBackground;
+  if (props.padding) styles['--cg-card-padding'] = props.padding;
+  return styles;
 });
 
 onMounted(async () => {
@@ -141,37 +188,66 @@ onMounted(async () => {
     v-else
     :href="articleUrl"
     class="cg-widget cg-featured-card"
-    :class="[className, layoutClass]"
+    :class="[className, layoutClass, borderClass]"
+    :style="customStyles"
     data-cg-widget="featured-card"
     :target="linkTarget"
     :rel="linkTarget === '_blank' ? 'noopener noreferrer' : undefined"
   >
     <article class="cg-featured-card-inner">
-      <!-- Header with category badge -->
-      <div v-if="showCategory && loadedArticle.category" class="cg-featured-card-category">
-        <span class="cg-category-badge">{{ loadedArticle.category }}</span>
+      <div class="cg-card-primary">
+        <!-- Header with category badge -->
+        <div v-if="showCategory && loadedArticle.category" class="cg-featured-card-category">
+          <span class="cg-category-badge">{{ loadedArticle.category }}</span>
+        </div>
+
+        <!-- Title -->
+        <h3 class="cg-featured-card-title">{{ loadedArticle.title }}</h3>
+
+        <!-- Featured Summary - Intro Part -->
+        <div v-if="summaryData" class="cg-featured-card-summary">
+          <!-- Structured Intro -->
+          <p v-if="(summaryData.type === 'list' || summaryData.type === 'steps' || summaryData.type === 'quote') && summaryData.intro">
+            {{ summaryData.intro }}
+          </p>
+          
+          <!-- Classic type -->
+          <p v-else-if="summaryData.type === 'classic'">{{ summaryData.text }}</p>
+          
+          <!-- Legacy type -->
+          <p v-else-if="summaryData.type === 'legacy'">{{ summaryData.text }}</p>
+        </div>
+
+        <!-- Footer with meta info -->
+        <div v-if="showAuthor || showReadingTime" class="cg-featured-card-footer">
+          <span v-if="showAuthor" class="cg-featured-card-author">{{ loadedArticle.authorName }}</span>
+          <template v-if="showAuthor && showReadingTime">
+            <span class="cg-featured-card-separator">•</span>
+          </template>
+          <span v-if="showReadingTime" class="cg-featured-card-reading-time">{{ readingTime }} min read</span>
+        </div>
+
+
       </div>
 
-      <!-- Title -->
-      <h3 class="cg-featured-card-title">{{ loadedArticle.title }}</h3>
-
-      <!-- Featured Summary -->
-      <div
-        v-if="summaryHtml"
-        class="cg-featured-card-summary"
-        v-html="summaryHtml"
-      ></div>
-
-      <!-- Footer with meta info -->
-      <div v-if="showAuthor || showReadingTime" class="cg-featured-card-footer">
-        <span v-if="showAuthor" class="cg-featured-card-author">{{ loadedArticle.authorName }}</span>
-        <template v-if="showAuthor && showReadingTime">
-          <span class="cg-featured-card-separator">•</span>
-        </template>
-        <span v-if="showReadingTime" class="cg-featured-card-reading-time">{{ readingTime }} min read</span>
+      <!-- Right Panel - Structured Visual Items -->
+      <div v-if="summaryData && (summaryData.type === 'list' || summaryData.type === 'steps')" class="cg-card-secondary">
+        <ul class="cg-summary-items">
+          <li v-for="(item, index) in summaryData.items" :key="index">
+            <span class="cg-item-number">{{ index + 1 }}</span>
+            <div class="cg-item-content">
+              <strong class="cg-item-title">{{ item.title }}</strong>
+              <span class="cg-item-description">{{ item.description }}</span>
+            </div>
+          </li>
+        </ul>
       </div>
 
-      <!-- Read more indicator -->
+      <div v-else-if="summaryData && summaryData.type === 'quote'" class="cg-card-secondary">
+        <blockquote>{{ summaryData.quote }}</blockquote>
+      </div>
+
+      <!-- CTA (Bottom) -->
       <div class="cg-featured-card-cta">
         <span>{{ ctaText }}</span>
         <svg class="cg-featured-card-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
