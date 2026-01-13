@@ -1,5 +1,6 @@
 ---
 import { ContentGrowthClient } from '../core/client';
+import { renderInlineMarkdownJS } from '../core/inline-markdown';
 import type { FeaturedContentProps, Article, ArticleWithContent } from '../types';
 
 interface FeaturedCardProps extends Omit<FeaturedContentProps, 'showBackButton' | 'backUrl'> {
@@ -227,12 +228,12 @@ const customStyles = [
           <div class="cg-featured-card-summary">
             {/* Intro for structured types */}
             {(summaryData.type === 'list' || summaryData.type === 'steps' || summaryData.type === 'quote') && summaryData.intro && (
-              <p>{summaryData.intro}</p>
+              <p set:html={renderInlineMarkdownJS(summaryData.intro)} />
             )}
 
             {/* Classic type - just text */}
             {summaryData.type === 'classic' && (
-              <p>{summaryData.text}</p>
+              <p set:html={renderInlineMarkdownJS(summaryData.text || '')} />
             )}
             
             {/* Legacy markdown - render as plain text */}
@@ -271,8 +272,8 @@ const customStyles = [
                 <li>
                   <span class="cg-item-number">{index + 1}</span>
                   <div class="cg-item-content">
-                    <strong class="cg-item-title">{item.title}</strong>
-                    <span class="cg-item-description">{item.description}</span>
+                    <strong class="cg-item-title" set:html={renderInlineMarkdownJS(item.title)} />
+                    <span class="cg-item-description" set:html={renderInlineMarkdownJS(item.description)} />
                   </div>
                 </li>
               ))}
@@ -280,9 +281,7 @@ const customStyles = [
           )}
           
           {summaryData.type === 'quote' && (
-            <blockquote>
-              {summaryData.quote}
-            </blockquote>
+            <blockquote set:html={renderInlineMarkdownJS(summaryData.quote || '')} />
           )}
         </div>
       )}

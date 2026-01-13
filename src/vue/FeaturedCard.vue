@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
 import { ContentGrowthClient } from '../core/client';
+import { renderInlineMarkdown } from '../core/inline-markdown';
 import type { ArticleWithContent, Article } from '../types';
 
 // Summary data interface for structured JSON format
@@ -207,12 +208,11 @@ onMounted(async () => {
         <!-- Featured Summary - Intro Part -->
         <div v-if="summaryData" class="cg-featured-card-summary">
           <!-- Structured Intro -->
-          <p v-if="(summaryData.type === 'list' || summaryData.type === 'steps' || summaryData.type === 'quote') && summaryData.intro">
-            {{ summaryData.intro }}
-          </p>
+          <p v-if="(summaryData.type === 'list' || summaryData.type === 'steps' || summaryData.type === 'quote') && summaryData.intro"
+             v-html="renderInlineMarkdown(summaryData.intro)"></p>
           
           <!-- Classic type -->
-          <p v-else-if="summaryData.type === 'classic'">{{ summaryData.text }}</p>
+          <p v-else-if="summaryData.type === 'classic'" v-html="renderInlineMarkdown(summaryData.text || '')"></p>
           
           <!-- Legacy type -->
           <p v-else-if="summaryData.type === 'legacy'">{{ summaryData.text }}</p>
@@ -236,15 +236,15 @@ onMounted(async () => {
           <li v-for="(item, index) in summaryData.items" :key="index">
             <span class="cg-item-number">{{ index + 1 }}</span>
             <div class="cg-item-content">
-              <strong class="cg-item-title">{{ item.title }}</strong>
-              <span class="cg-item-description">{{ item.description }}</span>
+              <strong class="cg-item-title" v-html="renderInlineMarkdown(item.title)"></strong>
+              <span class="cg-item-description" v-html="renderInlineMarkdown(item.description)"></span>
             </div>
           </li>
         </ul>
       </div>
 
       <div v-else-if="summaryData && summaryData.type === 'quote'" class="cg-card-secondary">
-        <blockquote>{{ summaryData.quote }}</blockquote>
+        <blockquote v-html="renderInlineMarkdown(summaryData.quote || '')"></blockquote>
       </div>
 
       <!-- CTA (Bottom) -->

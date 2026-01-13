@@ -5,4 +5,5 @@
 
 export { ContentGrowthClient } from './client.js';
 export * from './utils.js';
+export * from './inline-markdown.js';
 export * from '../types/index.js';

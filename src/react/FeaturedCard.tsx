@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ContentGrowthClient } from '../core/client';
+import { renderInlineMarkdown } from '../core/inline-markdown';
 import type { FeaturedContentProps, ArticleWithContent, Article } from '../types';
 
 // Summary data interface for structured JSON format
@@ -262,15 +263,15 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
                                 const summaryData = parseSummary(article)!;
 
                                 if (summaryData.type === 'classic') {
-                                    return <p>{summaryData.text}</p>;
+                                    return <p dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(summaryData.text || '') }} />;
                                 }
 
                                 if ((summaryData.type === 'list' || summaryData.type === 'steps') && summaryData.intro) {
-                                    return <p>{summaryData.intro}</p>;
+                                    return <p dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(summaryData.intro) }} />;
                                 }
 
                                 if (summaryData.type === 'quote' && summaryData.quote) {
-                                    return <p>{summaryData.intro}</p>;
+                                    return <p dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(summaryData.intro || '') }} />;
                                 }
 
                                 // Legacy
@@ -310,8 +311,8 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
                                         <li key={index}>
                                             <span className="cg-item-number">{index + 1}</span>
                                             <div className="cg-item-content">
-                                                <strong className="cg-item-title">{item.title}</strong>
-                                                <span className="cg-item-description">{item.description}</span>
+                                                <strong className="cg-item-title" dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(item.title) }} />
+                                                <span className="cg-item-description" dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(item.description) }} />
                                             </div>
                                         </li>
                                     ))}
@@ -323,7 +324,7 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
                     if (summaryData.type === 'quote' && summaryData.quote) {
                         return (
                             <div className="cg-card-secondary">
-                                <blockquote>{summaryData.quote}</blockquote>
+                                <blockquote dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(summaryData.quote) }} />
                             </div>
                         );
                     }
