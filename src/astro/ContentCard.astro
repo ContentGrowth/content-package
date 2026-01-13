@@ -64,6 +64,30 @@ interface ContentCardProps {
    * @default true
    */
   showCategory?: boolean;
+
+  /**
+   * Border style
+   * @default 'line'
+   */
+  borderStyle?: 'none' | 'line' | 'dashed';
+
+  /**
+   * Border color (CSS color value)
+   * @default '#e5e7eb'
+   */
+  borderColor?: string;
+
+  /**
+   * Card background color (CSS color value, 'none' for transparent)
+   * @default 'none'
+   */
+  cardBackground?: string;
+
+  /**
+   * Custom padding for the card content
+   * @example "20px" or "0"
+   */
+  padding?: string;
 }
 
 type Props = ContentCardProps & { class?: string };
@@ -80,6 +104,10 @@ const {
   summaryMaxLength,
   showTags = false,
   showCategory = true,
+  borderStyle = 'line',
+  borderColor = '#e5e7eb',
+  cardBackground = 'none',
+  padding,
   class: className = ''
 } = Astro.props;
 
@@ -123,10 +151,20 @@ const truncateSummary = (text: string | null, maxLength?: number): string => {
   if (!maxLength || text.length <= maxLength) return text;
   return text.substring(0, maxLength).trim() + '...';
 };
+// Generate CSS classes and styles
+const borderClass = borderStyle !== 'none' ? `cg-border-${borderStyle}` : '';
+const customStyles = [
+  borderColor !== '#e5e7eb' ? `--cg-card-border-color: ${borderColor}` : '',
+  cardBackground !== 'none' ? `--cg-card-bg: ${cardBackground}` : '',
+  padding ? `--cg-card-padding: ${padding}` : ''
+].filter(Boolean).join('; ');
 ---
 
 {article ? (
-  <article class={`cg-article-card ${className}`}>
+  <article 
+    class={`cg-article-card ${className} ${borderClass}`}
+    style={customStyles || undefined}
+  >
     <a href={getArticleUrl(article)} target={linkTarget} class="cg-card-link">
       <div class="cg-card-content">
         {showCategory && article.category && (

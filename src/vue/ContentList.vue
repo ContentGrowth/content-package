@@ -10,7 +10,7 @@
       <p>No articles found.</p>
     </div>
     <template v-else>
-      <div :class="`cg-articles-grid ${isFeaturedCardsMode ? 'cg-featured-cards-grid' : (layout === 'cards' ? 'cg-grid' : 'cg-list')}`">
+      <div :class="`cg-articles-grid ${isFeaturedCardsMode ? (layout === 'rows' ? 'cg-featured-cards-list' : 'cg-featured-cards-grid') : (layout === 'cards' ? 'cg-grid' : 'cg-list')}`">
         <!-- Featured Cards Mode -->
         <template v-if="isFeaturedCardsMode">
           <FeaturedCard
@@ -19,7 +19,11 @@
             :article="article"
             :linkPattern="linkPattern"
             :linkTarget="buildLinkTarget(article)"
-            :showCategory="true"
+            :showCategory="showCategory"
+            :layout="featuredCardLayout"
+            :borderStyle="borderStyle"
+            :borderColor="borderColor"
+            :itemsBackground="itemsBackground"
           />
         </template>
 
@@ -34,7 +38,9 @@
             :showSummary="showAiSummary"
             :summaryMaxLength="summaryMaxLength"
             :showTags="showTags"
-            :showCategory="true"
+            :showCategory="showCategory"
+            :borderStyle="borderStyle"
+            :borderColor="borderColor"
           />
         </template>
       </div>
@@ -86,6 +92,7 @@ const props = withDefaults(defineProps<VueContentListProps>(), {
   linkPattern: '/articles/{uuid}',
   showTags: false,
   showAiSummary: true,
+  showCategory: true,
   className: ''
 });
 

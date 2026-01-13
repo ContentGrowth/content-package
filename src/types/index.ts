@@ -274,6 +274,21 @@ export interface ContentListProps {
    * Force layout for featured cards
    */
   featuredCardLayout?: 'vertical' | 'horizontal';
+
+  /**
+   * Border style for cards
+   */
+  borderStyle?: 'none' | 'line' | 'dashed';
+
+  /**
+   * Border color
+   */
+  borderColor?: string;
+
+  /**
+   * Background color for items section (featured cards)
+   */
+  itemsBackground?: string;
 }
 
 /**

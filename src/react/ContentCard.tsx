@@ -64,6 +64,30 @@ export interface ContentCardProps {
     showCategory?: boolean;
 
     /**
+     * Border style
+     * @default 'line'
+     */
+    borderStyle?: 'none' | 'line' | 'dashed';
+
+    /**
+     * Border color (CSS color value)
+     * @default '#e5e7eb'
+     */
+    borderColor?: string;
+
+    /**
+     * Card background color (CSS color value, 'none' for transparent)
+     * @default 'none'
+     */
+    cardBackground?: string;
+
+    /**
+     * Custom padding for the card content
+     * @example "20px" or "0"
+     */
+    padding?: string;
+
+    /**
      * Additional CSS class
      */
     className?: string;
@@ -81,6 +105,10 @@ export const ContentCard: React.FC<ContentCardProps> = ({
     summaryMaxLength,
     showTags = false,
     showCategory = true,
+    borderStyle = 'line',
+    borderColor = '#e5e7eb',
+    cardBackground = 'none',
+    padding,
     className = ''
 }) => {
     const [article, setArticle] = useState<Article | ArticleWithContent | null>(providedArticle || null);
@@ -160,8 +188,19 @@ export const ContentCard: React.FC<ContentCardProps> = ({
     const readingTime = calculateReadingTime(article.wordCount);
     const publishedDate = formatDate(article.publishedAt);
 
+    const borderClass = borderStyle !== 'none' ? `cg-border-${borderStyle}` : '';
+
+    // Use explicit type assertion for custom properties
+    const customStyles: React.CSSProperties & Record<string, any> = {};
+    if (borderColor !== '#e5e7eb') customStyles['--cg-card-border-color'] = borderColor;
+    if (cardBackground !== 'none') customStyles['--cg-card-bg'] = cardBackground;
+    if (padding) customStyles['--cg-card-padding'] = padding;
+
     return (
-        <article className={`cg-article-card ${className}`}>
+        <article
+            className={`cg-article-card ${className} ${borderClass}`}
+            style={Object.keys(customStyles).length > 0 ? customStyles : undefined}
+        >
             <a href={getArticleUrl(article)} target={linkTarget} className="cg-card-link">
                 <div className="cg-card-content">
                     {showCategory && article.category && (

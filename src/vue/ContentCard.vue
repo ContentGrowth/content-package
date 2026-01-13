@@ -21,12 +21,19 @@ const props = withDefaults(defineProps<{
   summaryMaxLength?: number;
   showTags?: boolean;
   showCategory?: boolean;
+  borderStyle?: 'none' | 'line' | 'dashed';
+  borderColor?: string;
+  cardBackground?: string;
+  padding?: string;
   className?: string;
 }>(), {
   linkPattern: '/articles/{slug}',
   showSummary: true,
   showTags: false,
   showCategory: true,
+  borderStyle: 'line',
+  borderColor: '#e5e7eb',
+  cardBackground: 'none',
   className: ''
 });
 
@@ -116,7 +123,19 @@ onMounted(async () => {
     {{ error }}
   </div>
 
-  <article v-else-if="loadedArticle" class="cg-article-card" :class="className">
+  <article 
+    v-else-if="loadedArticle" 
+    class="cg-article-card" 
+    :class="[
+      className,
+      borderStyle !== 'none' ? `cg-border-${borderStyle}` : ''
+    ]"
+    :style="{
+      '--cg-card-border-color': borderColor !== '#e5e7eb' ? borderColor : undefined,
+      '--cg-card-bg': cardBackground !== 'none' ? cardBackground : undefined,
+      '--cg-card-padding': padding
+    }"
+  >
     <a :href="articleUrl" :target="linkTarget" class="cg-card-link">
       <div class="cg-card-content">
         <div v-if="showCategory && loadedArticle.category" class="cg-card-category">

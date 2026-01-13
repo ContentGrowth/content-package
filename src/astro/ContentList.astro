@@ -27,8 +27,11 @@ const {
   summaryMaxLength,
   linkTarget,
   class: className = '',
+  showCategory = true,
   featuredCardLayout,
-  showCategory = true
+  borderStyle,
+  borderColor,
+  itemsBackground
 } = Astro.props;
 
 // Get current page from URL
@@ -104,6 +107,9 @@ const isFeaturedCardsMode = displayAs === 'featured-cards';
                 linkTarget={articleTarget}
                 showCategory={showCategory}
                 layout={featuredCardLayout}
+                borderStyle={borderStyle}
+                borderColor={borderColor}
+                itemsBackground={itemsBackground}
               />
             );
           }
@@ -118,6 +124,8 @@ const isFeaturedCardsMode = displayAs === 'featured-cards';
               summaryMaxLength={summaryMaxLength}
               showTags={showTags}
               showCategory={showCategory}
+              borderStyle={borderStyle}
+              borderColor={borderColor}
             />
           );
         })}

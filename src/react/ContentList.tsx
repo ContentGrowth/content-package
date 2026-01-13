@@ -29,6 +29,11 @@ export const ContentList: React.FC<ReactContentListProps> = ({
   showAiSummary = true,
   summaryMaxLength,
   linkTarget,
+  featuredCardLayout,
+  borderStyle,
+  borderColor,
+  itemsBackground,
+  showCategory = true,
   className = ''
 }) => {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -119,7 +124,7 @@ export const ContentList: React.FC<ReactContentListProps> = ({
         </div>
       ) : (
         <>
-          <div className={`cg-articles-grid ${isFeaturedCardsMode ? 'cg-featured-cards-grid' : (layout === 'cards' ? 'cg-grid' : 'cg-list')}`}>
+          <div className={`cg-articles-grid ${isFeaturedCardsMode ? (layout === 'rows' ? 'cg-featured-cards-list' : 'cg-featured-cards-grid') : (layout === 'cards' ? 'cg-grid' : 'cg-list')}`}>
             {articles.map((article) => {
               const articleTarget = buildLinkTarget(article);
 
@@ -131,7 +136,11 @@ export const ContentList: React.FC<ReactContentListProps> = ({
                     article={article}
                     linkPattern={linkPattern}
                     linkTarget={articleTarget}
-                    showCategory={true}
+                    showCategory={showCategory}
+                    layout={featuredCardLayout}
+                    borderStyle={borderStyle}
+                    borderColor={borderColor}
+                    itemsBackground={itemsBackground}
                   />
                 );
               }
@@ -146,7 +155,9 @@ export const ContentList: React.FC<ReactContentListProps> = ({
                   showSummary={showAiSummary}
                   summaryMaxLength={summaryMaxLength}
                   showTags={showTags}
-                  showCategory={true}
+                  showCategory={showCategory}
+                  borderStyle={borderStyle}
+                  borderColor={borderColor}
                 />
               );
             })}
