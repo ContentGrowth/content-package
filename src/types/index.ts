@@ -263,6 +263,11 @@ export interface ContentListProps {
    * Custom CSS class (React alias)
    */
   className?: string;
+
+  /**
+   * Force layout for featured cards
+   */
+  featuredCardLayout?: 'vertical' | 'horizontal';
 }
 
 /**

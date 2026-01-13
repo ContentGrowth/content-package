@@ -26,7 +26,8 @@ const {
   showAiSummary = true,
   summaryMaxLength,
   linkTarget,
-  class: className = ''
+  class: className = '',
+  featuredCardLayout
 } = Astro.props;
 
 // Get current page from URL
@@ -84,7 +85,7 @@ const isFeaturedCardsMode = displayAs === 'featured-cards';
     </div>
   ) : (
     <>
-      <div class={`cg-articles-grid ${isFeaturedCardsMode ? 'cg-featured-cards-grid' : (layout === 'cards' ? 'cg-grid' : 'cg-list')}`}>
+      <div class={`cg-articles-grid ${isFeaturedCardsMode ? (layout === 'rows' ? 'cg-featured-cards-list' : 'cg-featured-cards-grid') : (layout === 'cards' ? 'cg-grid' : 'cg-list')}`}>
         {articles.map((article) => {
           // Build link target from pattern
           const articleTarget = linkTarget
@@ -101,6 +102,7 @@ const isFeaturedCardsMode = displayAs === 'featured-cards';
                 linkPattern={linkPattern}
                 linkTarget={articleTarget}
                 showCategory={true}
+                layout={featuredCardLayout}
               />
             );
           }

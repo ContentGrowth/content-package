@@ -743,6 +743,14 @@ a.cg-card {
   }
 }
 
+/* Featured Cards List (Rows) */
+.cg-articles-grid.cg-featured-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
 /* Article Card */
 .cg-article-card {
   background: var(--cg-bg);
