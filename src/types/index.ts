@@ -10,6 +10,7 @@ export interface Article {
   slug: string;
   title: string;
   category: string | null;
+  categoryLabel?: string;
   authorName: string;
   publishedAt: number;
   summary: string | null;

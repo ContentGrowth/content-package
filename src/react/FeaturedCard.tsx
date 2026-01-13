@@ -6,6 +6,7 @@ import type { FeaturedContentProps, ArticleWithContent, Article } from '../types
 // Summary data interface for structured JSON format
 interface SummaryData {
     type: 'classic' | 'list' | 'steps' | 'quote' | 'legacy';
+    title?: string;
     text?: string;
     intro?: string;
     items?: Array<{ title: string; description: string }>;
@@ -120,6 +121,11 @@ interface FeaturedCardProps extends Partial<Omit<FeaturedContentProps, 'showBack
      * @example "20px" or "0"
      */
     padding?: string;
+
+    /**
+     * Override category display text
+     */
+    categoryLabel?: string;
 }
 
 export const FeaturedCard: React.FC<FeaturedCardProps> = ({
@@ -143,6 +149,7 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
     cardBackground = 'none',
     itemsBackground = '#f3f4f6',
     padding,
+    categoryLabel,
     className = ''
 }) => {
     const [article, setArticle] = useState<Article | ArticleWithContent | null>(providedArticle || null);
@@ -235,6 +242,9 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
     if (itemsBackground !== '#f3f4f6') customStyles['--cg-items-bg'] = itemsBackground;
     if (padding) customStyles['--cg-card-padding'] = padding;
 
+    const summaryData = parseSummary(article);
+    const displayTitle = summaryData?.title || article.title;
+
     return (
         <a
             href={getArticleUrl(article)}
@@ -247,14 +257,13 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
             <article className="cg-featured-card-inner">
                 <div className="cg-card-primary">
                     {/* Header with category badge */}
-                    {showCategory && article.category && (
-                        <div className="cg-featured-card-category">
-                            <span className="cg-category-badge">{article.category}</span>
+                    {showCategory && (categoryLabel || (article as any).categoryLabel || article.category) && (
+                        <div className="cg-card-header">
+                            <span className="cg-category-badge">{categoryLabel || (article as any).categoryLabel || article.category}</span>
                         </div>
                     )}
 
-                    {/* Title */}
-                    <h3 className="cg-featured-card-title">{article.title}</h3>
+                    <h3 className="cg-card-title">{displayTitle}</h3>
 
                     {/* Featured Summary - Structured Rendering */}
                     {parseSummary(article) && (

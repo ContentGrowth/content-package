@@ -84,6 +84,11 @@ interface FeaturedCardProps extends Omit<FeaturedContentProps, 'showBackButton' 
    * @example "20px" or "0"
    */
   padding?: string;
+
+  /**
+   * Override category display text
+   */
+  categoryLabel?: string;
 }
 
 type Props = FeaturedCardProps & { class?: string };
@@ -109,6 +114,7 @@ const {
   cardBackground = 'none',
   itemsBackground = '#f3f4f6',
   padding,
+  categoryLabel,
   class: className = ''
 } = Astro.props;
 
@@ -154,8 +160,10 @@ const getArticleUrl = (article: any) => {
 };
 
 // Parse featured summary - supports both JSON (new) and plain text (legacy)
+// Parse featured summary - supports both JSON (new) and plain text (legacy)
 interface SummaryData {
   type: 'classic' | 'list' | 'steps' | 'quote' | 'legacy';
+  title?: string;
   text?: string;
   intro?: string;
   items?: Array<{ title: string; description: string }>;
@@ -185,6 +193,7 @@ const parseSummary = (article: any): SummaryData | null => {
 };
 
 const summaryData = article ? parseSummary(article) : null;
+const displayTitle = summaryData?.title || (article ? (article as any).title : '');
 
 const layout = propLayout || (article as any)?.featuredSummaryLayout || 'vertical';
 const layoutClass = layout !== 'vertical' ? `cg-layout-${layout}` : '';
@@ -214,14 +223,14 @@ const customStyles = [
     <article class="cg-featured-card-inner">
       <div class="cg-card-primary">
         {/* Header with category badge */}
-        {showCategory && article.category && (
-          <div class="cg-featured-card-category">
-            <span class="cg-category-badge">{article.category}</span>
+        {showCategory && (categoryLabel || (article as any).categoryLabel || article.category) && (
+          <div class="cg-card-header">
+            <span class="cg-category-badge">{categoryLabel || (article as any).categoryLabel || article.category}</span>
           </div>
         )}
         
         {/* Title */}
-        <h3 class="cg-featured-card-title">{article.title}</h3>
+        <h3 class="cg-card-title">{displayTitle}</h3>
         
         {/* Featured Summary - Intro / Text Part */}
         {summaryData && (

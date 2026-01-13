@@ -38,7 +38,9 @@ const props = withDefaults(defineProps<{
   borderColor?: string;
   cardBackground?: string;
   itemsBackground?: string;
+  itemsBackground?: string;
   padding?: string;
+  categoryLabel?: string;
   className?: string;
 }>(), {
   tags: () => [],
@@ -96,6 +98,10 @@ const summaryData = computed((): SummaryData | null => {
     type: 'legacy',
     text: summaryText
   };
+});
+
+const displayTitle = computed(() => {
+  return summaryData.value?.title || loadedArticle.value?.title || '';
 });
 
 const readingTime = computed(() => {
@@ -198,12 +204,12 @@ onMounted(async () => {
     <article class="cg-featured-card-inner">
       <div class="cg-card-primary">
         <!-- Header with category badge -->
-        <div v-if="showCategory && loadedArticle.category" class="cg-featured-card-category">
-          <span class="cg-category-badge">{{ loadedArticle.category }}</span>
+        <div v-if="showCategory && (categoryLabel || loadedArticle.categoryLabel || loadedArticle.category)" class="cg-card-header">
+          <span class="cg-category-badge">{{ categoryLabel || loadedArticle.categoryLabel || loadedArticle.category }}</span>
         </div>
 
         <!-- Title -->
-        <h3 class="cg-featured-card-title">{{ loadedArticle.title }}</h3>
+        <h3 class="cg-featured-card-title">{{ displayTitle }}</h3>
 
         <!-- Featured Summary - Intro Part -->
         <div v-if="summaryData" class="cg-featured-card-summary">
