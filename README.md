@@ -268,25 +268,81 @@ const widget = new ContentGrowthWidget(container, {
 />
 ```
 
+**ContentCard:**
+
+A standalone article card component. Use it to display individual articles outside of ContentList.
+
+```astro
+<!-- Load by slug -->
+<ContentCard
+  apiKey="pk_your_key_here"
+  slug="my-article-slug"
+  linkPattern="/articles/{slug}"
+/>
+
+<!-- Load by UUID -->
+<ContentCard
+  apiKey="pk_your_key_here"
+  uuid="article-uuid"
+/>
+
+<!-- Use pre-loaded article data -->
+<ContentCard
+  article={articleData}
+  linkPattern="/articles/{slug}"
+  showSummary={true}
+  showTags={true}
+/>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `apiKey` | string | - | Your API key (required unless `article` is provided) |
+| `article` | Article | - | Pre-loaded article data (skips API fetch) |
+| `slug` | string | - | Load specific article by slug |
+| `uuid` | string | - | Load specific article by UUID |
+| `linkPattern` | string | '/articles/{slug}' | URL pattern for link |
+| `linkTarget` | string | - | Link target attribute |
+| `showSummary` | boolean | true | Show article summary |
+| `summaryMaxLength` | number | - | Truncate summary at length |
+| `showTags` | boolean | false | Show article tags |
+| `showCategory` | boolean | true | Show category badge |
+
 **FeaturedCard:**
 
 A compact card displaying the Featured Summary with customizable styling. Perfect for landing pages.
 
 ```astro
+<!-- Find latest article in category -->
 <FeaturedCard
   apiKey="pk_your_key_here"
   category="announce"
   linkPattern="/articles/{slug}"
   layout="horizontal"
   borderStyle="dashed"
-  itemsBackground="#f3f4f6"
   ctaText="Read full story"
+/>
+
+<!-- Load specific article by slug -->
+<FeaturedCard
+  apiKey="pk_your_key_here"
+  slug="my-article-slug"
+  linkPattern="/articles/{slug}"
+/>
+
+<!-- Use pre-loaded article data (for lists) -->
+<FeaturedCard
+  article={articleData}
+  linkPattern="/articles/{slug}"
 />
 ```
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `apiKey` | string | - | Your API key |
+| `apiKey` | string | - | Your API key (required unless `article` is provided) |
+| `article` | Article | - | Pre-loaded article data (skips API fetch) |
+| `slug` | string | - | Load specific article by slug |
+| `uuid` | string | - | Load specific article by UUID |
 | `category` | string | - | Filter by category |
 | `tags` | string[] | [] | Filter by tags |
 | `layout` | 'vertical' \| 'horizontal' | auto | Card layout (auto uses article setting) |
@@ -298,6 +354,24 @@ A compact card displaying the Featured Summary with customizable styling. Perfec
 | `showAuthor` | boolean | false | Show author name |
 | `showReadingTime` | boolean | false | Show reading time |
 | `linkPattern` | string | '/articles/{slug}' | URL pattern for link |
+
+**Featured Cards List:**
+
+Display all articles as FeaturedCards in a grid using `displayAs`:
+
+```astro
+<ContentList
+  apiKey="pk_your_key_here"
+  displayAs="featured-cards"
+  linkPattern="/articles/{slug}"
+  pageSize={12}
+/>
+```
+
+| displayAs Value | Description |
+|-----------------|-------------|
+| `'default'` | Standard card/row layout |
+| `'featured-cards'` | Renders each article as a FeaturedCard |
 
 ## API Client
 

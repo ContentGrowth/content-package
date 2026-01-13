@@ -1,9 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { marked } from 'marked';
 import { ContentGrowthClient } from '../core/client';
-import type { FeaturedContentProps, ArticleWithContent } from '../types';
+import type { FeaturedContentProps, ArticleWithContent, Article } from '../types';
 
-interface FeaturedCardProps extends Omit<FeaturedContentProps, 'showBackButton' | 'backUrl' | 'showAiSummary' | 'showTags'> {
+interface FeaturedCardProps extends Partial<Omit<FeaturedContentProps, 'showBackButton' | 'backUrl' | 'showAiSummary' | 'showTags'>> {
+    /**
+     * Pre-loaded article data (bypasses API fetch - used by ContentList)
+     */
+    article?: Article | ArticleWithContent;
+
+    /**
+     * Load specific article by slug (bypasses category/tags search)
+     */
+    slug?: string;
+
+    /**
+     * Load specific article by UUID (bypasses category/tags search)
+     */
+    uuid?: string;
+
     /**
      * URL pattern for the article link
      * Supports placeholders: {uuid}, {slug}, {category}
@@ -68,6 +83,9 @@ interface FeaturedCardProps extends Omit<FeaturedContentProps, 'showBackButton' 
 export const FeaturedCard: React.FC<FeaturedCardProps> = ({
     apiKey,
     baseUrl,
+    article: providedArticle,
+    slug,
+    uuid,
     tags = [],
     category,
     excludeTags = [],
@@ -84,33 +102,58 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
     itemsBackground = '#f3f4f6',
     className = ''
 }) => {
-    const [article, setArticle] = useState<ArticleWithContent | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [article, setArticle] = useState<Article | ArticleWithContent | null>(providedArticle || null);
+    const [loading, setLoading] = useState(!providedArticle);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        // If article is provided, use it directly (no fetch needed)
+        if (providedArticle) {
+            setArticle(providedArticle);
+            setLoading(false);
+            return;
+        }
+
+        // Need API key to fetch
+        if (!apiKey) {
+            setLoading(false);
+            return;
+        }
+
         const fetchArticle = async () => {
             setLoading(true);
             try {
                 const client = new ContentGrowthClient({ apiKey, baseUrl });
-                const fetchedArticle = await client.getFeaturedArticle({
-                    tags,
-                    category,
-                    excludeTags
-                });
+                let fetchedArticle: ArticleWithContent;
+
+                if (uuid) {
+                    // Mode 2: Load by UUID
+                    fetchedArticle = await client.getArticle(uuid, { excludeTags });
+                } else if (slug) {
+                    // Mode 3: Load by slug
+                    fetchedArticle = await client.getArticleBySlug(slug, { excludeTags });
+                } else {
+                    // Mode 4: Find featured article by category/tags (original behavior)
+                    fetchedArticle = await client.getFeaturedArticle({
+                        tags,
+                        category,
+                        excludeTags
+                    });
+                }
+
                 setArticle(fetchedArticle);
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'Failed to load featured article');
+                setError(err instanceof Error ? err.message : 'Failed to load article');
             } finally {
                 setLoading(false);
             }
         };
 
         fetchArticle();
-    }, [apiKey, baseUrl, category, JSON.stringify(tags), JSON.stringify(excludeTags)]);
+    }, [apiKey, baseUrl, providedArticle, uuid, slug, category, JSON.stringify(tags), JSON.stringify(excludeTags)]);
 
     // Generate article URL
-    const getArticleUrl = (article: ArticleWithContent) => {
+    const getArticleUrl = (article: Article | ArticleWithContent) => {
         return linkPattern
             .replace('{uuid}', article.uuid || '')
             .replace('{slug}', article.slug || article.uuid || '')
@@ -118,7 +161,7 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
     };
 
     // Render featured summary (or fallback to regular summary) as HTML
-    const getSummaryHtml = (article: ArticleWithContent) => {
+    const getSummaryHtml = (article: Article | ArticleWithContent) => {
         const summaryText = (article as any).featuredSummary || article.summary;
         if (!summaryText) return '';
         return marked.parse(summaryText, { async: false }) as string;
@@ -141,10 +184,10 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
     }
 
     const summaryHtml = getSummaryHtml(article);
-    // Explicitly use any to access dynamic properties until types are fully updated
-    const layout = propLayout || (article as any).featuredSummaryLayout || 'standard';
+    const layout = propLayout || (article as any).featuredSummaryLayout || 'vertical';
     const readingTime = Math.ceil(article.wordCount / 200);
     const borderClass = borderStyle !== 'none' ? `cg-border-${borderStyle}` : '';
+    const layoutClass = layout !== 'vertical' ? `cg-layout-${layout}` : '';
 
     // Use ctaText from prop, or from article data, or fallback to default
     const ctaText = propCtaText || (article as any).featuredCtaText || 'Read full story';
@@ -157,7 +200,7 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
     return (
         <a
             href={getArticleUrl(article)}
-            className={`cg-widget cg-featured-card ${className} ${layout !== 'standard' ? `cg-layout-${layout}` : ''} ${borderClass}`}
+            className={`cg-widget cg-featured-card ${className} ${layoutClass} ${borderClass}`}
             style={Object.keys(customStyles).length > 0 ? customStyles : undefined}
             data-cg-widget="featured-card"
             target={linkTarget}

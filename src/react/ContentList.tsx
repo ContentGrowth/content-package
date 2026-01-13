@@ -5,7 +5,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { ContentGrowthClient } from '../core/client.js';
-import { formatDate, calculateReadingTime } from '../core/utils.js';
+import { FeaturedCard } from './FeaturedCard.js';
+import { ContentCard } from './ContentCard.js';
 import type { ContentListProps, Article } from '../types/index.js';
 
 export interface ReactContentListProps extends Omit<ContentListProps, 'class'> {
@@ -17,6 +18,7 @@ export const ContentList: React.FC<ReactContentListProps> = ({
   baseUrl,
   layout = 'cards',
   displayMode = 'comfortable',
+  displayAs = 'default',
   theme = 'light',
   pageSize = 12,
   tags = [],
@@ -33,6 +35,8 @@ export const ContentList: React.FC<ReactContentListProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+
+  const isFeaturedCardsMode = displayAs === 'featured-cards';
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -106,7 +110,7 @@ export const ContentList: React.FC<ReactContentListProps> = ({
 
   return (
     <div
-      className={`cg-content-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${className}`}
+      className={`cg-content-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${isFeaturedCardsMode ? 'cg-featured-cards-list' : ''} ${className}`}
       data-cg-widget="list"
     >
       {articles.length === 0 ? (
@@ -115,49 +119,35 @@ export const ContentList: React.FC<ReactContentListProps> = ({
         </div>
       ) : (
         <>
-          <div className={`cg-articles-grid ${layout === 'cards' ? 'cg-grid' : 'cg-list'}`}>
+          <div className={`cg-articles-grid ${isFeaturedCardsMode ? 'cg-featured-cards-grid' : (layout === 'cards' ? 'cg-grid' : 'cg-list')}`}>
             {articles.map((article) => {
-              const articleUrl = buildArticleUrl(article);
               const articleTarget = buildLinkTarget(article);
-              const readingTime = calculateReadingTime(article.wordCount);
-              const publishedDate = formatDate(article.publishedAt);
 
+              // Featured Cards Mode - Use FeaturedCard component
+              if (isFeaturedCardsMode) {
+                return (
+                  <FeaturedCard
+                    key={article.uuid}
+                    article={article}
+                    linkPattern={linkPattern}
+                    linkTarget={articleTarget}
+                    showCategory={true}
+                  />
+                );
+              }
+
+              // Default Card Mode - Use ContentCard component
               return (
-                <article key={article.uuid} className="cg-article-card">
-                  <a href={articleUrl} target={articleTarget} className="cg-card-link">
-                    <div className="cg-card-content">
-                      {article.category && (
-                        <div className="cg-card-category">
-                          <span className="cg-category-badge">{article.category}</span>
-                        </div>
-                      )}
-
-                      <h2 className="cg-card-title">{article.title}</h2>
-
-                      {showAiSummary && article.summary && (
-                        <p className="cg-card-summary">{truncateSummary(article.summary, summaryMaxLength)}</p>
-                      )}
-
-                      <div className="cg-card-meta">
-                        <span className="cg-meta-author">{article.authorName}</span>
-                        <span className="cg-meta-separator">•</span>
-                        <time className="cg-meta-date" dateTime={new Date(article.publishedAt * 1000).toISOString()}>
-                          {publishedDate}
-                        </time>
-                        <span className="cg-meta-separator">•</span>
-                        <span className="cg-meta-reading-time">{readingTime}</span>
-                      </div>
-
-                      {showTags && article.tags && article.tags.length > 0 && (
-                        <div className="cg-card-tags">
-                          {article.tags.map((tag) => (
-                            <span key={tag} className="cg-tag">{tag}</span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </a>
-                </article>
+                <ContentCard
+                  key={article.uuid}
+                  article={article}
+                  linkPattern={linkPattern}
+                  linkTarget={articleTarget}
+                  showSummary={showAiSummary}
+                  summaryMaxLength={summaryMaxLength}
+                  showTags={showTags}
+                  showCategory={true}
+                />
               );
             })}
           </div>
@@ -192,3 +182,4 @@ export const ContentList: React.FC<ReactContentListProps> = ({
 };
 
 export default ContentList;
+

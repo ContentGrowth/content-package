@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="`cg-content-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${className}`"
+    :class="`cg-content-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${isFeaturedCardsMode ? 'cg-featured-cards-list' : ''} ${className}`"
     data-cg-widget="list"
   >
     <div v-if="loading" class="cg-empty-state">
@@ -10,36 +10,33 @@
       <p>No articles found.</p>
     </div>
     <template v-else>
-      <div :class="`cg-articles-grid ${layout === 'cards' ? 'cg-grid' : 'cg-list'}`">
-        <article v-for="article in articles" :key="article.uuid" class="cg-article-card">
-          <a :href="buildArticleUrl(article)" :target="buildLinkTarget(article)" class="cg-card-link">
-            <div class="cg-card-content">
-              <div v-if="article.category" class="cg-card-category">
-                <span class="cg-category-badge">{{ article.category }}</span>
-              </div>
-              
-              <h2 class="cg-card-title">{{ article.title }}</h2>
-              
-              <p v-if="showAiSummary && article.summary" class="cg-card-summary">
-                {{ truncateSummary(article.summary, summaryMaxLength) }}
-              </p>
-              
-              <div class="cg-card-meta">
-                <span class="cg-meta-author">{{ article.authorName }}</span>
-                <span class="cg-meta-separator">•</span>
-                <time class="cg-meta-date" :datetime="new Date(article.publishedAt * 1000).toISOString()">
-                  {{ formatDate(article.publishedAt) }}
-                </time>
-                <span class="cg-meta-separator">•</span>
-                <span class="cg-meta-reading-time">{{ calculateReadingTime(article.wordCount) }}</span>
-              </div>
-              
-              <div v-if="showTags && article.tags && article.tags.length > 0" class="cg-card-tags">
-                <span v-for="tag in article.tags" :key="tag" class="cg-tag">{{ tag }}</span>
-              </div>
-            </div>
-          </a>
-        </article>
+      <div :class="`cg-articles-grid ${isFeaturedCardsMode ? 'cg-featured-cards-grid' : (layout === 'cards' ? 'cg-grid' : 'cg-list')}`">
+        <!-- Featured Cards Mode -->
+        <template v-if="isFeaturedCardsMode">
+          <FeaturedCard
+            v-for="article in articles"
+            :key="article.uuid"
+            :article="article"
+            :linkPattern="linkPattern"
+            :linkTarget="buildLinkTarget(article)"
+            :showCategory="true"
+          />
+        </template>
+
+        <!-- Default Card Mode - Use ContentCard component -->
+        <template v-else>
+          <ContentCard
+            v-for="article in articles"
+            :key="article.uuid"
+            :article="article"
+            :linkPattern="linkPattern"
+            :linkTarget="buildLinkTarget(article)"
+            :showSummary="showAiSummary"
+            :summaryMaxLength="summaryMaxLength"
+            :showTags="showTags"
+            :showCategory="true"
+          />
+        </template>
       </div>
 
       <div v-if="showPagination && totalPages > 1" class="cg-pagination">
@@ -68,9 +65,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import { ContentGrowthClient } from '../core/client.js';
-import { formatDate, calculateReadingTime } from '../core/utils.js';
+import FeaturedCard from './FeaturedCard.vue';
+import ContentCard from './ContentCard.vue';
 import type { ContentListProps, Article } from '../types/index.js';
 
 export interface VueContentListProps extends Omit<ContentListProps, 'class'> {
@@ -80,6 +78,7 @@ export interface VueContentListProps extends Omit<ContentListProps, 'class'> {
 const props = withDefaults(defineProps<VueContentListProps>(), {
   layout: 'cards',
   displayMode: 'comfortable',
+  displayAs: 'default',
   theme: 'light',
   pageSize: 12,
   tags: () => [],
@@ -94,6 +93,8 @@ const articles = ref<Article[]>([]);
 const currentPage = ref(1);
 const totalPages = ref(1);
 const loading = ref(true);
+
+const isFeaturedCardsMode = computed(() => props.displayAs === 'featured-cards');
 
 const fetchArticles = async () => {
   loading.value = true;
@@ -171,3 +172,4 @@ watch(
   }
 );
 </script>
+

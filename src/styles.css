@@ -720,9 +720,26 @@ a.cg-card {
   margin-bottom: 2rem;
 }
 
+/* Featured Cards Grid for displayAs="featured-cards" */
+.cg-articles-grid.cg-featured-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.cg-articles-grid.cg-featured-cards-grid .cg-featured-card {
+  height: 100%;
+}
+
 @media (max-width: 768px) {
   .cg-articles-grid.cg-grid {
     grid-template-columns: 1fr;
+  }
+
+  .cg-articles-grid.cg-featured-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }
 

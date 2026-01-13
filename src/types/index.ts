@@ -14,6 +14,8 @@ export interface Article {
   publishedAt: number;
   summary: string | null;
   featuredSummary: string | null;
+  featuredSummaryLayout?: 'vertical' | 'horizontal';
+  featuredCtaText?: string;
   tags: string[];
   wordCount: number;
 }
@@ -147,6 +149,11 @@ export type DisplayMode = 'compact' | 'comfortable' | 'spacious';
 export type Theme = 'light' | 'dark';
 
 /**
+ * Display style for content list
+ */
+export type DisplayAs = 'default' | 'featured-cards';
+
+/**
  * Component props for ContentList
  */
 export interface ContentListProps {
@@ -172,6 +179,14 @@ export interface ContentListProps {
    * @default 'comfortable'
    */
   displayMode?: DisplayMode;
+
+  /**
+   * Display style - how to render each article
+   * 'default' = standard card/row layout
+   * 'featured-cards' = FeaturedCard style with summary and CTA
+   * @default 'default'
+   */
+  displayAs?: DisplayAs;
 
   /**
    * Theme

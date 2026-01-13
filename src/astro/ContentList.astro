@@ -5,7 +5,8 @@
  */
 import type { ContentListProps } from '../types/index.js';
 import { ContentGrowthClient } from '../core/client.js';
-import { formatDate, calculateReadingTime } from '../core/utils.js';
+import FeaturedCard from './FeaturedCard.astro';
+import ContentCard from './ContentCard.astro';
 
 interface Props extends ContentListProps {}
 
@@ -14,6 +15,7 @@ const {
   baseUrl,
   layout = 'cards',
   displayMode = 'comfortable',
+  displayAs = 'default',
   theme = 'light',
   pageSize = 12,
   tags = [],
@@ -67,10 +69,13 @@ function truncateSummary(text: string | null, maxLength?: number): string {
   if (!maxLength || text.length <= maxLength) return text;
   return text.substring(0, maxLength).trim() + '...';
 }
+
+// Check if we're in featured-cards mode
+const isFeaturedCardsMode = displayAs === 'featured-cards';
 ---
 
 <div 
-  class={`cg-content-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${className}`}
+  class={`cg-content-list cg-layout-${layout} cg-display-${displayMode} cg-theme-${theme} ${isFeaturedCardsMode ? 'cg-featured-cards-list' : ''} ${className}`}
   data-cg-widget="list"
 >
   {articles.length === 0 ? (
@@ -79,60 +84,38 @@ function truncateSummary(text: string | null, maxLength?: number): string {
     </div>
   ) : (
     <>
-      <div class={`cg-articles-grid ${layout === 'cards' ? 'cg-grid' : 'cg-list'}`}>
+      <div class={`cg-articles-grid ${isFeaturedCardsMode ? 'cg-featured-cards-grid' : (layout === 'cards' ? 'cg-grid' : 'cg-list')}`}>
         {articles.map((article) => {
-          // Build article URL from pattern
-          const articleUrl = linkPattern
-            .replace('{uuid}', article.uuid)
-            .replace('{slug}', article.slug)
-            .replace('{category}', article.category || '');
-          
           // Build link target from pattern
           const articleTarget = linkTarget
             ? linkTarget
                 .replace('{uuid}', article.uuid)
                 .replace('{id}', article.uuid)
             : undefined;
-          
-          const readingTime = calculateReadingTime(article.wordCount);
-          const publishedDate = formatDate(article.publishedAt);
 
+          // Featured Cards Mode - Use FeaturedCard component
+          if (isFeaturedCardsMode) {
+            return (
+              <FeaturedCard
+                article={article}
+                linkPattern={linkPattern}
+                linkTarget={articleTarget}
+                showCategory={true}
+              />
+            );
+          }
+
+          // Default Card Mode - Use ContentCard component
           return (
-            <article class="cg-article-card">
-              <a href={articleUrl} target={articleTarget} class="cg-card-link">
-                <div class="cg-card-content">
-                  {article.category && (
-                    <div class="cg-card-category">
-                      <span class="cg-category-badge">{article.category}</span>
-                    </div>
-                  )}
-                  
-                  <h2 class="cg-card-title">{article.title}</h2>
-                  
-                  {showAiSummary && article.summary && (
-                    <p class="cg-card-summary">{truncateSummary(article.summary, summaryMaxLength)}</p>
-                  )}
-                  
-                  <div class="cg-card-meta">
-                    <span class="cg-meta-author">{article.authorName}</span>
-                    <span class="cg-meta-separator">•</span>
-                    <time class="cg-meta-date" datetime={new Date(article.publishedAt * 1000).toISOString()}>
-                      {publishedDate}
-                    </time>
-                    <span class="cg-meta-separator">•</span>
-                    <span class="cg-meta-reading-time">{readingTime}</span>
-                  </div>
-                  
-                  {showTags && article.tags && article.tags.length > 0 && (
-                    <div class="cg-card-tags">
-                      {article.tags.map((tag) => (
-                        <span class="cg-tag">{tag}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </a>
-            </article>
+            <ContentCard
+              article={article}
+              linkPattern={linkPattern}
+              linkTarget={articleTarget}
+              showSummary={showAiSummary}
+              summaryMaxLength={summaryMaxLength}
+              showTags={showTags}
+              showCategory={true}
+            />
           );
         })}
       </div>
