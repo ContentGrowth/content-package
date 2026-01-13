@@ -1019,7 +1019,7 @@ a.cg-card {
 }
 
 .cg-featured-card-inner {
-  padding: 2rem 2.5rem;
+  padding: var(--cg-card-padding, 2rem 2.5rem);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -1306,7 +1306,7 @@ a.cg-card {
     /* Two rows: Content and CTA */
     gap: 1.5rem 3rem;
     /* Row gap, Col gap */
-    padding: 0;
+    padding: var(--cg-card-padding, 2.5rem 3rem);
     align-items: start;
     /* Align top by default, center handled by flex children */
   }

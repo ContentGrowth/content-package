@@ -320,6 +320,8 @@ A compact card displaying the Featured Summary with customizable styling. Perfec
   linkPattern="/articles/{slug}"
   layout="horizontal"
   borderStyle="dashed"
+  borderColor="#e5e7eb"
+  padding="20px"
   ctaText="Read full story"
 />
 
@@ -350,10 +352,22 @@ A compact card displaying the Featured Summary with customizable styling. Perfec
 | `borderColor` | string | '#e5e7eb' | Border color (CSS value) |
 | `cardBackground` | string | 'none' | Card background ('none' = transparent) |
 | `itemsBackground` | string | '#f3f4f6' | Background for list/quote section |
+| `padding` | string | - | Custom padding (e.g., '10px', '2rem 3rem') |
 | `ctaText` | string | 'Read full story' | Call-to-action text |
 | `showAuthor` | boolean | false | Show author name |
 | `showReadingTime` | boolean | false | Show reading time |
 | `linkPattern` | string | '/articles/{slug}' | URL pattern for link |
+
+**Featured Summary Types:**
+
+FeaturedCard supports structured JSON summaries generated via the portal wizard:
+
+| Type | Description |
+|------|-------------|
+| `list` | Intro text on left, bulleted key points on right |
+| `steps` | Intro text on left, numbered action steps on right |
+| `quote` | Intro text on left, styled pullquote on right |
+| `classic` | Simple text summary (legacy) |
 
 **Featured Cards List:**
 
