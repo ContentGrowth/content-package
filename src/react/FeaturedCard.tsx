@@ -263,7 +263,7 @@ export const FeaturedCard: React.FC<FeaturedCardProps> = ({
                         </div>
                     )}
 
-                    <h3 className="cg-card-title">{displayTitle}</h3>
+                    <h3 className="cg-featured-card-title">{displayTitle}</h3>
 
                     {/* Featured Summary - Structured Rendering */}
                     {parseSummary(article) && (

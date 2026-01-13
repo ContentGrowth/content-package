@@ -1041,9 +1041,9 @@ a.cg-card {
 
 .cg-featured-card-title {
   margin: 0 0 1rem;
-  font-size: 1.625rem;
+  font-size: 2.25rem;
   font-weight: 800;
-  line-height: 1.25;
+  line-height: 1.2;
   color: var(--cg-text);
   letter-spacing: -0.02em;
 }
@@ -1343,7 +1343,7 @@ a.cg-card {
   }
 
   .cg-layout-horizontal .cg-featured-card-title {
-    font-size: 1.875rem;
+    font-size: 2.5rem;
     margin-bottom: 1rem;
   }
 
