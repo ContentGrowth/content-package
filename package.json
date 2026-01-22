@@ -1,6 +1,6 @@
 {
   "name": "@contentgrowth/content-widget",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Embed your Content Growth articles anywhere with beautiful, customizable components",
   "type": "module",
   "main": "./dist/index.js",
@@ -79,7 +79,7 @@
   "homepage": "https://github.com/ContentGrowth/content-package#readme",
   "peerDependencies": {
     "astro": "^4.0.0 || ^5.0.0",
-    "react": "^17.0.0 || ^18.0.0",
+    "react": "^17.0.0 || ^18.0.0 || ^19.0.0",
     "vue": "^3.0.0"
   },
   "peerDependenciesMeta": {
