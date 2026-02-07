@@ -1,6 +1,6 @@
 # @content-growth/content-widget
 
-Embed your Content Growth content anywhere with beautiful, customizable components.
+Embed your [Content Growth](https://www.content-growth.com) content anywhere with beautiful, customizable components.
 
 ## Features
 
@@ -11,6 +11,11 @@ Embed your Content Growth content anywhere with beautiful, customizable componen
 - ⚡ **Fast** - Built-in caching and optimized performance
 - 🎨 **Customizable** - Multiple layouts and display modes
 - 📱 **Responsive** - Mobile-first design
+
+## Live Demos
+
+Check out our [Live Demos](https://www.content-growth.com/demo) to see the widgets in action.
+You can also view the [Documentation](https://docs.content-growth.com/widgets) for more details.
 
 ## Installation
 
@@ -182,6 +187,28 @@ const widget = new ContentGrowthWidget(container, {
   category="guides"
   showPagination={true}
 />
+
+```
+
+**FeaturedContent:**
+
+Display a single featured article (e.g. latest in category):
+
+```jsx
+<FeaturedContent
+  apiKey="pk_your_key_here"
+  category="announce"
+  showAiSummary={true}
+/>
+```
+
+**FeaturedCard & ContentCard:**
+
+Also available as React components with the same props as documented below.
+
+```jsx
+<FeaturedCard apiKey="pk_your_key_here" slug="my-article" />
+<ContentCard apiKey="pk_your_key_here" slug="my-article" />
 ```
 
 **ContentViewer:**
@@ -218,6 +245,24 @@ const widget = new ContentGrowthWidget(container, {
   category="guides"
   :show-pagination="true"
 />
+
+```
+
+**FeaturedContent:**
+
+```vue
+<FeaturedContent
+  api-key="pk_your_key_here"
+  category="announce"
+  :show-ai-summary="true"
+/>
+```
+
+**FeaturedCard & ContentCard:**
+
+```vue
+<FeaturedCard api-key="pk_your_key_here" slug="my-article" />
+<ContentCard api-key="pk_your_key_here" slug="my-article" />
 ```
 
 **ContentViewer:**
@@ -336,6 +381,19 @@ A compact card displaying the Featured Summary with customizable styling. Perfec
 <FeaturedCard
   article={articleData}
   linkPattern="/articles/{slug}"
+/>
+
+```
+
+**FeaturedContent:**
+
+Display a single featured article (full content viewer style):
+
+```astro
+<FeaturedContent
+  apiKey="pk_your_key_here"
+  category="announce"
+  showAiSummary={true}
 />
 ```
 
